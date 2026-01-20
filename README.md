@@ -14,7 +14,6 @@ The game focuses on clean architecture, efficient resource management, and an it
 
 ## Controls
 - **Mouse** – Interact / Shoot
-- 
 *(Controls may change as development progresses)*
 
 ## Technical Features
@@ -49,6 +48,6 @@ Then:
 2. Select Debug or Release
 3. Build and run the project from Visual Studio
 
-##Author
+## Author
 
 Developed by Oier Álvarez as part of a C++ & SFML academic project.
