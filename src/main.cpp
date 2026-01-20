@@ -29,7 +29,6 @@ int main()
         return 1;
 
     // ========= STATION =========
-
     Station::StationDescriptor stationDesc;
     stationDesc.position = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
     stationDesc.health = 5;
@@ -41,27 +40,12 @@ int main()
     world->setStation(std::move(station));
 
     // ========= ENEMIES =========
-
     Enemy::EnemyDescriptor enemyDesc;
     enemyDesc.health = 5;
     enemyDesc.visualType = Entity::VisualType::BasicEnemySquares;
     enemyDesc.velocity = sf::Vector2f(60.f, 0.f);
 
-    for (int i = 0; i < 10; i++)
-    {
-        enemyDesc.position = sf::Vector2f(
-            static_cast<float>(std::rand() % SCREEN_WIDTH),
-            static_cast<float>(std::rand() % SCREEN_HEIGHT)
-        );
-
-        auto enemy = std::make_unique<Enemy>();
-        enemy->init(enemyDesc);
-
-        // Target the station (for now: descriptor position)
-        enemy->setTarget(stationDesc.position, stationDesc.radius);
-
-        world->addEntity(std::move(enemy));
-    }
+    world->spawnEnemy(enemyDesc, stationDesc.position, stationDesc.radius);
 
     sf::Clock clock;
 

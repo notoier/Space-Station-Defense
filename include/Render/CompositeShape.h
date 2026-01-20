@@ -5,8 +5,6 @@
 #ifndef SPACESTATIONDEFENSE_COMPOSITESHAPE_H
 #define SPACESTATIONDEFENSE_COMPOSITESHAPE_H
 
-#pragma once
-
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <memory>
@@ -29,10 +27,10 @@ public:
         std::unique_ptr<sf::Shape> shape;
         float size = 0.f;
 
-        sf::Vector2f localOffset;
+        sf::Vector2f localOffset {0, 0};
 
-        float localRotationDeg;
-        float spinSpeedDegPerSec;
+        float localRotationDeg {0.f};
+        float spinSpeedDegPerSec {0.f};
 
         // Orbit around the composite origin (center)
         float orbitAngleDeg = 0.f;
@@ -45,7 +43,17 @@ public:
 
     void update(float dtSeconds);
 
-    Part getPart(int index);
+    Part& getPart(std::size_t index);
+    const Part& getPart(std::size_t index) const;
+
+    CompositeShape() = default;
+    ~CompositeShape() override = default;
+
+    CompositeShape(const CompositeShape&) = delete;
+    CompositeShape& operator=(const CompositeShape&) = delete;
+
+    CompositeShape(CompositeShape&&) noexcept = default;
+    CompositeShape& operator=(CompositeShape&&) noexcept = default;
 
 private:
     void draw(sf::RenderTarget& target,

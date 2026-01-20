@@ -13,13 +13,15 @@ void World::update(const float deltaMilliseconds)
 {
 	if (m_station) m_station->update(deltaMilliseconds);
 
-	for (const auto& entity : m_entities)
+	m_enemyPool.forEachActive([&](Enemy& e)
 	{
-		if (entity->isAlive())
+		e.update(deltaMilliseconds);
+
+		if (e.isTargetReached() /* or e.isDead() or out of bounds */)
 		{
-			entity->update(deltaMilliseconds);
+			m_enemyPool.release(&e);
 		}
-	}
+	});
 }
 
 void World::render(sf::RenderWindow& window)
@@ -29,20 +31,39 @@ void World::render(sf::RenderWindow& window)
 
 	if (m_station) m_station->render(window);
 
-	for (const auto& entity : m_entities)
+	m_enemyPool.forEachActive([&](Enemy& e)
 	{
-			entity->render(window);
-	}
-}
-
-void World::addEntity(std::unique_ptr<Entity> entity)
-{
-	m_entities.push_back(std::move(entity));
+		e.render(window); // if you have render per entity
+	});
 }
 
 void World::setStation(std::unique_ptr<Station> station)
 {
 	m_station = std::move(station);
+}
+
+void World::spawnEnemy(const Enemy::EnemyDescriptor& baseDesc,
+					   const sf::Vector2f targetPos,
+					   const float targetSize)
+{
+	for (int i = 0; i < 10; ++i)
+	{
+		Enemy::EnemyDescriptor desc = baseDesc; // copia LOCAL
+
+		desc.position = {
+			static_cast<float>(std::rand() % SCREEN_WIDTH),
+			static_cast<float>(std::rand() % SCREEN_HEIGHT)
+		};
+
+		const Enemy* enemy = m_enemyPool.acquire([&](Enemy& e)
+		{
+			e.init(desc);
+			e.setTarget(targetPos, targetSize);
+		});
+
+		if (!enemy)
+			break; // pool lleno
+	}
 }
 
 const Station* World::getStation() const

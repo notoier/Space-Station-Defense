@@ -8,18 +8,14 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
-CompositeShape::Part& CompositeShape::addPart(std::unique_ptr<sf::Shape> shape, const float size, const sf::Vector2f localOffset)
+CompositeShape::Part& CompositeShape::addPart(std::unique_ptr<sf::Shape> shape, float size, sf::Vector2f localOffset)
 {
-    m_parts.push_back(
-        Part{
-            std::move(shape),
-            size,
-            localOffset,
-        0.f,
-        0.f
-        }
-    );
+    Part part{};
+    part.shape = std::move(shape);
+    part.size = size;
+    part.localOffset = localOffset;
 
+    m_parts.emplace_back(std::move(part));
     return m_parts.back();
 }
 
@@ -32,9 +28,14 @@ void CompositeShape::update(float dtSeconds)
     }
 }
 
-CompositeShape::Part CompositeShape::getPart(const int index)
+CompositeShape::Part& CompositeShape::getPart(std::size_t index)
 {
-    return ((index < m_parts.size()) ? std::move(m_parts[index]) : Part{});
+    return m_parts.at(index);
+}
+
+const CompositeShape::Part& CompositeShape::getPart(std::size_t index) const
+{
+    return m_parts.at(index);
 }
 
 void CompositeShape::draw(sf::RenderTarget& target, sf::RenderStates states) const

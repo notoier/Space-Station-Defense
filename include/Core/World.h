@@ -4,8 +4,12 @@
 #include <cstdint>
 #include <list>
 
+#include "ObjectPool.h"
+#include "Gameplay/Enemy.h"
 #include "Gameplay/Entity.h"
 #include "Gameplay/Station.h"
+
+class Enemy;
 
 namespace sf
 {
@@ -27,12 +31,13 @@ public:
 	// Minimal render: draw background only (optional)
 	void render(sf::RenderWindow& window);
 
-	void addEntity(std::unique_ptr<Entity> entity);
 	void setStation(std::unique_ptr<Station> station);
+	void spawnEnemy(const Enemy::EnemyDescriptor& baseDesc, sf::Vector2f targetPos, float targetSize);
+
 	[[nodiscard]] const Station* getStation() const;
 
 protected:
-	std::vector<std::unique_ptr<Entity>> m_entities;
+	ObjectPool<Enemy> m_enemyPool {128};
 	std::unique_ptr<Station> m_station;
 
 };

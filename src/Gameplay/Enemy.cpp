@@ -4,12 +4,15 @@
 
 #include "Gameplay/Enemy.h"
 #include <cmath>
+#include <iostream>
+
 #include "Core/World.h"
 #include "Utils/MathUtils.h"
 
 bool Enemy::init(const EnemyDescriptor& descriptor)
 {
     m_velocity = descriptor.velocity;
+    m_size = descriptor.size;
     return Entity::init(descriptor);
 }
 
@@ -38,12 +41,7 @@ void Enemy::setTarget(const sf::Vector2f& target, const float targetRadius)
     m_targetRadius = targetRadius;
 }
 
-bool Enemy::isTargetReached()
+bool Enemy::isTargetReached() const
 {
-    const CompositeShape::Part centralPart = m_visual.getPart(0);
-    const float boxSize = centralPart.size;
-    const sf::Vector2f boxPos = m_position;
-
-    const bool reached = BoxCircumferenceCollision(boxPos, boxSize, m_targetPosition, m_targetRadius);
-    return reached;
+    return BoxCircumferenceCollision(m_position, m_size, m_targetPosition, m_targetRadius);
 }

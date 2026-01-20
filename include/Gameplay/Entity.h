@@ -40,6 +40,7 @@ protected:
     int m_health{1};
     bool m_isAlive{true};
     sf::Vector2f m_position{0.f, 0.f};
+    float m_size{0.f};
 
     CompositeShape m_visual;
 };

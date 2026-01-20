@@ -6,6 +6,7 @@
 
 bool Station::init(const StationDescriptor& descriptor)
 {
+    m_size = descriptor.radius;
     return Entity::init(descriptor);
 }
 

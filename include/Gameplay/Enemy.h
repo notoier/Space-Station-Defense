@@ -16,11 +16,13 @@ public:
         float size = 0.f;
     };
 
+    ~Enemy() override = default;
+
     bool init (const EnemyDescriptor& descriptor);
     void update (float dt) override;
 
     void setTarget (const sf::Vector2f& target, float targetRadius);
-    bool isTargetReached();
+    bool isTargetReached() const;
 
 protected:
     sf::Vector2f m_velocity {0.f, 0.f};
