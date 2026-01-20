@@ -1,0 +1,32 @@
+﻿//
+// Created by Oier Álvarez on 19/01/2026.
+//
+
+#ifndef SPACESTATIONDEFENSE_ENEMY_H
+#define SPACESTATIONDEFENSE_ENEMY_H
+#include "Entity.h"
+
+
+class Enemy : public Entity
+{
+public:
+    struct EnemyDescriptor : public EntityDescriptor
+    {
+        sf::Vector2f velocity {0.f, 0.f};
+        float size = 0.f;
+    };
+
+    bool init (const EnemyDescriptor& descriptor);
+    void update (float dt) override;
+
+    void setTarget (const sf::Vector2f& target, float targetRadius);
+    bool isTargetReached();
+
+protected:
+    sf::Vector2f m_velocity {0.f, 0.f};
+    sf::Vector2f m_targetPosition {0.f, 0.f};
+    float m_targetRadius {0.f};
+};
+
+
+#endif //SPACESTATIONDEFENSE_ENEMY_H
