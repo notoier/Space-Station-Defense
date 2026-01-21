@@ -29,11 +29,13 @@ void World::update(const float deltaMilliseconds)
 
 	}
 
+
+
 	m_enemyPool.forEachActive([&](Enemy& e)
 	{
 		e.update(deltaMilliseconds);
 
-		if (e.isTargetReached() /* or e.isDead() or out of bounds */)
+		if (e.isTargetReached() || !e.isAlive())
 		{
 			m_enemyPool.release(&e);
 		}
@@ -101,5 +103,13 @@ void World::setAimWorld(const sf::Vector2f& aimWorld)
 
 void World::onLeftClick()
 {
-	if (m_station) m_station->onLeftClick();
+	if (m_station)
+	{
+		m_station->onLeftClick();
+		for (auto& w : m_station->getWeapons())
+		{
+			w->applyEffectToEnemies(m_enemyPool);
+		}
+	}
+
 }

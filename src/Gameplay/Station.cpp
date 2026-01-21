@@ -63,7 +63,6 @@ void Station::shootLaser()
     {
         if (auto* laser = dynamic_cast<Laser*>(w.get()))
         {
-            laser->setEnabled(true);
             laser->shoot();
             return;
         }

@@ -6,10 +6,10 @@
 
 #include <cmath>
 #include <iostream>
-#include <ostream>
 
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
+#include "Utils/MathUtils.h"
 
 class World;
 
@@ -51,8 +51,9 @@ void Laser::render(sf::RenderWindow& window)
     if (m_enabled)
     {
         window.draw(m_beam);
-        setEnabled(false);
     }
+
+    setEnabled(false);
 }
 
 void Laser::beamSetUp(const sf::Vector2f start, const sf::Vector2f end, const sf::Vector2f dir)
@@ -75,16 +76,56 @@ void Laser::beamSetUp(const sf::Vector2f start, const sf::Vector2f end, const sf
 
 void Laser::shoot()
 {
+    setEnabled(true);
     const sf::Vector2f dir = normalize(m_context.aimWorld - m_context.originWorld);
     const sf::Vector2f end = m_context.originWorld + dir * m_stats.range;
+    m_fired = true;
 
     // Visual
     beamSetUp(m_context.originWorld, end, dir);
 }
 
+float Laser::getDamage()
+{
+    return m_stats.damage;
+}
+
+void Laser::applyEffectToEnemies(ObjectPool<Enemy>& enemyPool)
+{
+    if (!m_enabled || !m_fired)
+        return;
+
+    m_fired = false;
+
+    const sf::Vector2f start = m_context.originWorld;
+    const sf::Vector2f delta = m_context.aimWorld - start;
+
+    if (dot(delta, delta) < 0.000001f)
+        return;
+
+    const sf::Vector2f dir = normalize(delta);
+    const sf::Vector2f end = start + dir * m_stats.range;
+
+    const float thickness = m_stats.width;
+    const sf::FloatRect laserBox = BuildLaserAABB(start, end, thickness);
+
+    enemyPool.forEachActive([&](Enemy& e)
+    {
+        if (!e.isAlive())
+            return;
+
+        const sf::FloatRect enemyBox(e.getPosition().x, e.getPosition().y, e.getSize(), e.getSize());
+
+        if (laserBox.intersects(enemyBox))
+        {
+            e.receiveDamage(getDamage());
+        }
+    });
+
+}
+
+
 void Laser::setEnabled(const bool enable)
 {
     m_enabled = enable;
 }
-
-

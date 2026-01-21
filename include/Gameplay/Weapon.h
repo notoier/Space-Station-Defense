@@ -31,6 +31,10 @@ public:
     virtual void update(float dtMilliseconds) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
     virtual void shoot() = 0;
+
+    virtual float getDamage() = 0;
+    virtual void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool) = 0;
+
     void setWeaponContext(const WeaponContext ctx) {m_context = ctx;}
 
 protected:

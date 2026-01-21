@@ -43,8 +43,8 @@ int main()
     // Create laser weapon and add it to the station
     Laser::Stats laserStats;
     laserStats.range = 600.f;
-    laserStats.damage = 10.f;
-    laserStats.width = 50.f;
+    laserStats.damage = 0.5f;
+    laserStats.width = 25.f;
 
     station->addWeapon(std::make_unique<Laser>(laserStats)); // Laser active by default
 

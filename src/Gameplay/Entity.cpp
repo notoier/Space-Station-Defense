@@ -4,6 +4,9 @@
 
 #include "Gameplay/Entity.h"
 
+#include <iostream>
+#include <ostream>
+
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
@@ -37,10 +40,16 @@ void Entity::render(sf::RenderWindow& window)
 void Entity::receiveDamage(const float damage)
 {
     m_health -= damage;
+    std::cout << "Health: " << m_health << std::endl;
     if (m_health <= 0)
     {
         m_isAlive = false;
     }
+}
+
+float Entity::getSize() const
+{
+    return m_size;
 }
 
 sf::Vector2f Entity::getCenter() const
@@ -89,6 +98,7 @@ void Entity::buildVisual(VisualType type)
             // Square 1
             {
                 constexpr float size = 22.f;
+                m_size = size;
                 auto& p = m_visual.addPart(makeSquare(size), size);
                 p.orbitRadius = 0.f;               // stays in center
                 p.orbitSpeedDegPerSec = 0.f;

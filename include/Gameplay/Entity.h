@@ -30,6 +30,7 @@ public:
     void update(float deltaMilliseconds) override;
     void render(sf::RenderWindow& window) override;
     void receiveDamage(float damage);
+    float getSize() const;
 
 
     sf::Vector2f getCenter() const;

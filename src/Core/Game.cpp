@@ -55,7 +55,6 @@ void Game::update(uint32_t deltaMilliseconds)
 
         if (event.type == sf::Event::MouseButtonPressed)
         {
-            std::cout << event.mouseButton.button << std::endl;
             m_world->onLeftClick();
         }
     }

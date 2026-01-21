@@ -24,7 +24,11 @@ public:
 
     void setStats(const Stats& stats) { m_stats = stats; };
     void beamSetUp(sf::Vector2f start, sf::Vector2f end, sf::Vector2f dir);
+
     void shoot() override;
+    float getDamage() override;
+    void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool);
+
     void setEnabled(bool enable);
 
     const Stats& getStats() const { return m_stats; };
@@ -33,6 +37,7 @@ private:
     Stats m_stats;
     sf::VertexArray m_beam;
     bool m_hasHit = false;
+    bool m_fired = false;
 };
 
 

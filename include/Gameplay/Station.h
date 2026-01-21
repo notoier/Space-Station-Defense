@@ -24,7 +24,6 @@ public:
     std::vector<std::unique_ptr<Weapon>>& getWeapons();
     const std::vector<std::unique_ptr<Weapon>>& getWeapons() const;
     void addWeapon(std::unique_ptr<Weapon> weapon);
-
     void shootLaser();
 
     void setAimWorld(const sf::Vector2f& aim);
