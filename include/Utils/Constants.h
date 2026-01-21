@@ -6,5 +6,6 @@ constexpr auto GAME_TITLE = "GameTemplate";
 const auto BACKGROUND_COLOR = sf::Color(33, 33, 50, 255);
 
 constexpr int SCREEN_WIDTH = 1920, SCREEN_HEIGHT = 1080;
+const sf::Vector2f STATION_POSITION = {SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.5};
 
 #endif //SPACESTATIONDEFENSE_CONSTS_H

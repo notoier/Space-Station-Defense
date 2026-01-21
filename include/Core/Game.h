@@ -38,6 +38,8 @@ public:
     void render();
 
     World* getWorld() const;
+    sf::RenderWindow& getWindow();
+    const sf::RenderWindow& getWindow() const;
 
 private:
 

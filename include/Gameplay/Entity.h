@@ -21,7 +21,7 @@ public:
     struct EntityDescriptor
     {
         sf::Vector2f position{0.f, 0.f};
-        int health{0};
+        float health{0};
         VisualType visualType{VisualType::StationCircle};
     };
 
@@ -29,6 +29,10 @@ public:
     bool init(const EntityDescriptor& descriptor);
     void update(float deltaMilliseconds) override;
     void render(sf::RenderWindow& window) override;
+    void receiveDamage(float damage);
+
+
+    sf::Vector2f getCenter() const;
 
     bool isAlive() const;
 
@@ -37,9 +41,8 @@ protected:
     void buildVisual(VisualType type);
 
 protected:
-    int m_health{1};
+    float m_health{1};
     bool m_isAlive{true};
-    sf::Vector2f m_position{0.f, 0.f};
     float m_size{0.f};
 
     CompositeShape m_visual;

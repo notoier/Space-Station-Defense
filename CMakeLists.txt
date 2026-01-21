@@ -57,7 +57,10 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/Gameplay/Enemy.cpp
         include/Gameplay/Enemy.h
         src/Utils/MathUtils.cpp
-        include/Utils/MathUtils.h)
+        include/Utils/MathUtils.h
+        src/Gameplay/Laser.cpp
+        include/Gameplay/Laser.h
+        include/Gameplay/Weapon.h)
 
 # =========================
 # Includes

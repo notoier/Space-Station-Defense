@@ -11,6 +11,8 @@
 #include <cstdlib>   // rand
 #include <cstdint>
 
+#include "Gameplay/Laser.h"
+
 int main()
 {
     Game game;
@@ -31,17 +33,26 @@ int main()
     // ========= STATION =========
     Station::StationDescriptor stationDesc;
     stationDesc.position = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
-    stationDesc.health = 5;
+    stationDesc.health = 20.f;
     stationDesc.visualType = Entity::VisualType::StationCircle;
     stationDesc.radius = 50.f;
 
     auto station = std::make_unique<Station>();
     station->init(stationDesc);
+
+    // Create laser weapon and add it to the station
+    Laser::Stats laserStats;
+    laserStats.range = 600.f;
+    laserStats.damage = 10.f;
+    laserStats.width = 50.f;
+
+    station->addWeapon(std::make_unique<Laser>(laserStats)); // Laser active by default
+
     world->setStation(std::move(station));
 
     // ========= ENEMIES =========
     Enemy::EnemyDescriptor enemyDesc;
-    enemyDesc.health = 5;
+    enemyDesc.health = 1;
     enemyDesc.visualType = Entity::VisualType::BasicEnemySquares;
     enemyDesc.velocity = sf::Vector2f(60.f, 0.f);
 

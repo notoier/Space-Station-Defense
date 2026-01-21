@@ -34,6 +34,20 @@ void Entity::render(sf::RenderWindow& window)
     window.draw(m_visual);
 }
 
+void Entity::receiveDamage(const float damage)
+{
+    m_health -= damage;
+    if (m_health <= 0)
+    {
+        m_isAlive = false;
+    }
+}
+
+sf::Vector2f Entity::getCenter() const
+{
+    return { m_position.x + m_size * 0.5f, m_position.y + m_size * 0.5f };
+}
+
 bool Entity::isAlive() const
 {
     return m_isAlive;

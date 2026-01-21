@@ -11,7 +11,23 @@ bool World::load()
 
 void World::update(const float deltaMilliseconds)
 {
-	if (m_station) m_station->update(deltaMilliseconds);
+	const float dtSeconds = deltaMilliseconds / 1000.f;
+
+	if (m_station)
+	{
+		m_station->update(deltaMilliseconds);
+
+		Weapon::WeaponContext ctx;
+		ctx.originWorld = m_station->getCenter();
+		ctx.aimWorld    = m_station->getAimWorld();
+
+		for (auto& w : m_station->getWeapons())
+		{
+			w->setWeaponContext(ctx);
+			w->update(dtSeconds);
+		}
+
+	}
 
 	m_enemyPool.forEachActive([&](Enemy& e)
 	{
@@ -29,8 +45,14 @@ void World::render(sf::RenderWindow& window)
 	// Nothing to render for now
 	// (You can keep window.clear() in main.cpp)
 
-	if (m_station) m_station->render(window);
-
+	if (m_station)
+	{
+		m_station->render(window);
+		for (auto& w : m_station->getWeapons())
+		{
+			w->render(window);
+		}
+	}
 	m_enemyPool.forEachActive([&](Enemy& e)
 	{
 		e.render(window); // if you have render per entity
@@ -69,4 +91,15 @@ void World::spawnEnemy(const Enemy::EnemyDescriptor& baseDesc,
 const Station* World::getStation() const
 {
 	return m_station.get();
+}
+
+void World::setAimWorld(const sf::Vector2f& aimWorld)
+{
+	if (m_station)
+		m_station->setAimWorld(aimWorld);
+}
+
+void World::onLeftClick()
+{
+	if (m_station) m_station->onLeftClick();
 }

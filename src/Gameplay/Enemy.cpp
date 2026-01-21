@@ -13,6 +13,8 @@ bool Enemy::init(const EnemyDescriptor& descriptor)
 {
     m_velocity = descriptor.velocity;
     m_size = descriptor.size;
+    m_damage = descriptor.damage;
+
     return Entity::init(descriptor);
 }
 

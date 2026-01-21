@@ -10,6 +10,7 @@
 #include "Gameplay/Station.h"
 
 class Enemy;
+class Station;
 
 namespace sf
 {
@@ -35,6 +36,9 @@ public:
 	void spawnEnemy(const Enemy::EnemyDescriptor& baseDesc, sf::Vector2f targetPos, float targetSize);
 
 	[[nodiscard]] const Station* getStation() const;
+
+	void setAimWorld(const sf::Vector2f& aimWorld);
+	void onLeftClick();
 
 protected:
 	ObjectPool<Enemy> m_enemyPool {128};
