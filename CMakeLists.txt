@@ -43,7 +43,9 @@ file(GLOB_RECURSE SRC_SOURCES CONFIGURE_DEPENDS
 )
 
 # Ensure main is included even if it's already in SRC_SOURCES
-set(PROJECT_SOURCES ${MAIN_SOURCE} ${SRC_SOURCES})
+set(PROJECT_SOURCES ${MAIN_SOURCE} ${SRC_SOURCES}
+        src/UI/PauseMenu.cpp
+        include/UI/PauseMenu.h)
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/Core/Game.cpp
@@ -60,7 +62,11 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         include/Utils/MathUtils.h
         src/Gameplay/Laser.cpp
         include/Gameplay/Laser.h
-        include/Gameplay/Weapon.h)
+        include/Gameplay/Weapon.h
+        src/UI/Button.cpp
+        include/UI/Button.h
+        src/UI/Menu.cpp
+        include/UI/Menu.h)
 
 # =========================
 # Includes
