@@ -106,17 +106,20 @@ void Laser::applyEffectToEnemies(ObjectPool<Enemy>& enemyPool)
     const sf::Vector2f dir = normalize(delta);
     const sf::Vector2f end = start + dir * m_stats.range;
 
-    const float thickness = m_stats.width;
-    const sf::FloatRect laserBox = BuildLaserAABB(start, end, thickness);
+    const float halfWidth = m_stats.width * 0.5f;
 
     enemyPool.forEachActive([&](Enemy& e)
     {
         if (!e.isAlive())
             return;
 
-        const sf::FloatRect enemyBox(e.getPosition().x, e.getPosition().y, e.getSize(), e.getSize());
+        const float size = e.getSize();
+        const sf::Vector2f center = e.getCenter();
 
-        if (laserBox.intersects(enemyBox))
+        const auto radius = static_cast<float>(sqrt(2) * size/2);
+        const float hitRadius = radius + halfWidth;
+
+        if (SegmentCircleCollision(start, end, center, hitRadius))
         {
             e.receiveDamage(getDamage());
         }

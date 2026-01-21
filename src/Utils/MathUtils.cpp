@@ -100,19 +100,17 @@ sf::FloatRect BuildLaserAABB(const sf::Vector2f& start,
     return {minX, minY, maxX - minX, maxY - minY};
 }
 
-bool SegmentPointWithinRadius(const sf::Vector2f& start,
-                                     const sf::Vector2f& end,
-                                     const sf::Vector2f& point,
-                                     float radius)
+bool SegmentPointWithinRadius(const sf::Vector2f& start, const sf::Vector2f& end, const sf::Vector2f& center, const float radius)
 {
     const sf::Vector2f d = end - start;
     const float a = dot(d, d);
-    if (a < 0.000001f)
-        return lengthSq(point - start) <= radius * radius;
 
-    float t = dot(point - start, d) / a;
+    if (a < 0.000001f)
+        return lengthSq(center - start) <= radius * radius;
+
+    float t = dot(center - start, d) / a;
     t = std::clamp(t, 0.f, 1.f);
 
     const sf::Vector2f closest = start + d * t;
-    return lengthSq(point - closest) <= radius * radius;
+    return lengthSq(center - closest) <= radius * radius;
 }

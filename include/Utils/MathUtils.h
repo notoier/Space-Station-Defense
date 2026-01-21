@@ -21,6 +21,6 @@ bool AABBCollision(const sf::FloatRect& a, const sf::FloatRect& b);
 
 bool SegmentAABBCollision(const sf::Vector2f& segStart, const sf::Vector2f& segEnd, const sf::FloatRect& box);
 
-bool SegmentPointWithinRadius(const sf::Vector2f& start, const sf::Vector2f& end, const sf::Vector2f& point, float radius);
+bool SegmentPointWithinRadius(const sf::Vector2f& start, const sf::Vector2f& end, const sf::Vector2f& center, float radius);
 
 #endif //SPACESTATIONDEFENSE_MATHUTILS_H
