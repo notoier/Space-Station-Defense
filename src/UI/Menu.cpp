@@ -4,6 +4,9 @@
 
 #include "UI/Menu.h"
 
+#include <iostream>
+#include <ostream>
+
 #include "UI/Button.h"
 
 Menu::Menu() = default;
@@ -25,11 +28,23 @@ void Menu::setTitlePosition(const sf::Vector2f& position)
 }
 
 void Menu::createButton(const sf::Vector2f position, const sf::RectangleShape& shape, const char* text,
-    const std::function<bool()>& func)
+    const std::function<void()>& func)
 {
     Button button;
     button.init(position, shape, text, func);
     m_buttons.push_back(std::make_unique<Button>(button));
+}
+
+void Menu::onLeftClick(sf::Vector2f mousePos)
+{
+    for (const auto& button : m_buttons)
+    {
+        if (sf::RectangleShape bShape = button->getShape(); bShape.getGlobalBounds().contains(mousePos))
+        {
+            button->onClick();
+        }
+
+    }
 }
 
 void Menu::enable(const bool enable)

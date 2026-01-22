@@ -16,16 +16,18 @@
 class Button
 {
 public:
-    void init(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, std::function<bool()> func);
+    void init(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, std::function<void()> func);
     void setPosition(const sf::Vector2f& pos);
-    void setFunction(const std::function<bool()>& func);
+    void setFunction(const std::function<void()>& func);
     void setShape(const sf::RectangleShape& shape);
+    sf::RectangleShape getShape() const;
+
     void setText(const char* text);
-    bool onClick() const;
+    void onClick() const;
     void render(sf::RenderWindow& window) const;
 
 private:
-    std::function<bool()> onClickFunction = nullptr;
+    std::function<void()> onClickFunction = nullptr;
     sf::Vector2f m_position {0.f, 0.f};
     sf::RectangleShape m_shape;
     sf::Color m_color;

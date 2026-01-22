@@ -23,6 +23,9 @@ bool Game::init(GameCreateInfo& createInfo)
     m_window->setFramerateLimit(createInfo.frameRateLimit);
 
     m_pauseWindow = new PauseMenu();
+    m_pauseWindow->setResumeFunc([this]() {resumeGame();});
+    m_pauseWindow->setSettingsFunc([this]() {openSettings();});
+    m_pauseWindow->setExitFunc([this]() {quitGame();});
 
     m_pauseOverlay.setSize({
        static_cast<float>(createInfo.screenWidth),
@@ -73,15 +76,20 @@ void Game::update(uint32_t deltaMilliseconds)
             togglePause();
         }
 
-        if (m_isPaused)
-        {
-            // TODO:
-            continue;
-        }
-
         if (event.type == sf::Event::MouseButtonPressed)
         {
-            m_world->onLeftClick();
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+                if (m_isPaused)
+                {
+                    const sf::Vector2i mousePx = sf::Mouse::getPosition(*m_window);
+                    const sf::Vector2f mouseWorld = m_window->mapPixelToCoords(mousePx);
+                    m_pauseWindow->onLeftClick(mouseWorld);
+
+                    continue;
+                }
+                m_world->onLeftClick();
+            }
         }
 
     }
@@ -149,4 +157,14 @@ void Game::resumeGame()
 void Game::togglePause()
 {
     m_isPaused ? resumeGame() : pauseGame();
+}
+
+void Game::quitGame()
+{
+    std::cout << "Quitting Game..." << std::endl;
+}
+
+void Game::openSettings()
+{
+    std::cout << "Opening Settings..." << std::endl;
 }

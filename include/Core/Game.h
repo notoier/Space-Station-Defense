@@ -52,6 +52,9 @@ private:
     void resumeGame();
     void togglePause();
 
+    void quitGame();
+    void openSettings();
+
     PauseMenu* m_pauseWindow{nullptr};
     sf::RectangleShape m_pauseOverlay;
     sf::RenderWindow* m_window{ nullptr };

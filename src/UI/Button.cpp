@@ -6,7 +6,7 @@
 
 #include "Utils/Constants.h"
 
-void Button::init(const sf::Vector2f position, const sf::RectangleShape& shape, const char* text, std::function<bool()> func)
+void Button::init(const sf::Vector2f position, const sf::RectangleShape& shape, const char* text, std::function<void()> func)
 {
     setPosition(position);
     setFunction(func);
@@ -19,7 +19,7 @@ void Button::setPosition(const sf::Vector2f& pos)
     m_position = pos;
 }
 
-void Button::setFunction(const std::function<bool()>& func)
+void Button::setFunction(const std::function<void()>& func)
 {
     onClickFunction = func;
 }
@@ -33,18 +33,22 @@ void Button::setShape(const sf::RectangleShape& shape)
     m_shape.setOutlineColor(OUTLINE_COLOR);
 }
 
+sf::RectangleShape Button::getShape() const
+{
+    return m_shape;
+}
+
 void Button::setText(const char* text)
 {
     //m_text = text;
 }
 
-bool Button::onClick() const
+void Button::onClick() const
 {
     if (onClickFunction)
     {
-        return onClickFunction();
+        onClickFunction();
     }
-    return false;
 }
 
 void Button::render(sf::RenderWindow& window) const

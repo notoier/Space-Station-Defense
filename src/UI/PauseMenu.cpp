@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <ostream>
+#include <utility>
 
 #include "UI/Button.h"
 #include "Utils/Constants.h"
@@ -44,7 +45,7 @@ bool PauseMenu::init()
     buttonShape.setOutlineColor(OUTLINE_COLOR);
 
     // Column layout inside panel
-    const int buttonCount = 3;
+    constexpr int buttonCount = 3;
     const float spacing = size.y * 0.04f; // vertical spacing
     const float totalHeight = buttonCount * buttonSize.y + (buttonCount - 1) * spacing;
 
@@ -59,26 +60,54 @@ bool PauseMenu::init()
     createButton({x, startY + 1 * (buttonSize.y + spacing)}, buttonShape, labels[1], [this]() { return settings(); });
     createButton({x, startY + 2 * (buttonSize.y + spacing)}, buttonShape, labels[2], [this]() { return quit(); });
 
+    sf::Font font;
+    if (!font.loadFromFile("data/fonts/rush_driver_italic.otf"))
+    {
+        std::cerr << "Font loading failed" << std::endl;
+    }
+
+    sf::Vector2f fontPosition = {m_position.x + size.x * 0.33f, m_position.y + spacing * 0.5f};
+
+    m_font = font;
+    m_text.scale(2,2);
+    m_text.setFont(m_font);
+    m_text.setString("Paused");
+    m_text.setPosition(fontPosition);
 
     return true;
 }
 
-bool PauseMenu::resume()
+void PauseMenu::resume()
 {
     std::cout << "PauseMenu::resume" << std::endl;
-    return true;
+    if (m_onResume) m_onResume();
 }
 
-bool PauseMenu::quit()
+void PauseMenu::quit()
 {
     std::cout << "PauseMenu::quit()" << std::endl;
-    return true;
+    if (m_onExit) m_onExit();
 }
 
-bool PauseMenu::settings()
+void PauseMenu::settings()
 {
     std::cout << "PauseMenu::settings()" << std::endl;
-    return true;
+    if (m_onSettings) m_onSettings();
+}
+
+void PauseMenu::setResumeFunc(const std::function<void()>& func)
+{
+    m_onResume = func;
+}
+
+void PauseMenu::setSettingsFunc(const std::function<void()>& func)
+{
+    m_onSettings = func;
+}
+
+void PauseMenu::setExitFunc(const std::function<void()>& func)
+{
+    m_onExit = func;
 }
 
 void PauseMenu::render(sf::RenderWindow& window) const
@@ -86,11 +115,13 @@ void PauseMenu::render(sf::RenderWindow& window) const
     if (!m_enabled) return;
 
     window.draw(m_window_shape);
+    window.draw(m_text);
 
     for (auto& button : m_buttons)
     {
         button->render(window);
     }
 }
+
 
 

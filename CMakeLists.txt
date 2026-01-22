@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 project(SpaceStationDefense LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -67,6 +67,13 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         include/UI/Button.h
         src/UI/Menu.cpp
         include/UI/Menu.h)
+
+# Copy game data/ next to the executable
+add_custom_command(TARGET SpaceStationDefense POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/data
+        $<TARGET_FILE_DIR:SpaceStationDefense>/data
+)
 
 # =========================
 # Includes

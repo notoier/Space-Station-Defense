@@ -23,15 +23,19 @@ public:
     Menu();
     virtual ~Menu();
     virtual bool init();
+    virtual void render(sf::RenderWindow& window) const = 0;
+
     void setMenuTitle(const sf::Text& text);
     void setTitlePosition(const sf::Vector2f& position);
-    void createButton(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, const std::function<bool()>& func);
+    void createButton(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, const std::function<void()>& func);
+
+    void onLeftClick(sf::Vector2f mousePos);
     void enable(bool enable);
     bool isEnabled() const;
-    virtual void render(sf::RenderWindow& window) const = 0;
 
 protected:
     bool m_enabled = false;
+    sf::Font m_font;
     sf::Text m_text;
     std::vector<std::unique_ptr<Button>> m_buttons;
 };
