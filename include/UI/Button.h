@@ -8,6 +8,7 @@
 
 #include "SFML/Graphics/Color.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Graphics/Shape.hpp"
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -21,6 +22,7 @@ public:
     void setShape(const sf::RectangleShape& shape);
     void setText(const char* text);
     bool onClick() const;
+    void render(sf::RenderWindow& window) const;
 
 private:
     std::function<bool()> onClickFunction = nullptr;

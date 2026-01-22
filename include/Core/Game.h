@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 
+#include "UI/PauseMenu.h"
+
 namespace sf
 {
     class RenderWindow;
@@ -41,8 +43,17 @@ public:
     sf::RenderWindow& getWindow();
     const sf::RenderWindow& getWindow() const;
 
+
 private:
 
+    bool m_isPaused = false;
+
+    void pauseGame();
+    void resumeGame();
+    void togglePause();
+
+    PauseMenu* m_pauseWindow{nullptr};
+    sf::RectangleShape m_pauseOverlay;
     sf::RenderWindow* m_window{ nullptr };
     std::unique_ptr<World> m_world{ nullptr };
 };

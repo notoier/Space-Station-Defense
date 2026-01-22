@@ -6,6 +6,9 @@
 
 #include "UI/Button.h"
 
+Menu::Menu() = default;
+Menu::~Menu() = default;
+
 bool Menu::init()
 {
     return true;
@@ -27,5 +30,15 @@ void Menu::createButton(const sf::Vector2f position, const sf::RectangleShape& s
     Button button;
     button.init(position, shape, text, func);
     m_buttons.push_back(std::make_unique<Button>(button));
+}
+
+void Menu::enable(const bool enable)
+{
+    m_enabled = enable;
+}
+
+bool Menu::isEnabled() const
+{
+    return m_enabled;
 }
 
