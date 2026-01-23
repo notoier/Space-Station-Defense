@@ -16,7 +16,9 @@
 class Button
 {
 public:
-    void init(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, std::function<void()> func);
+    void init(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, const sf::Font& font, const std::function<
+                  void()>& func);
+
     void setPosition(const sf::Vector2f& pos);
     void setFunction(const std::function<void()>& func);
     void setShape(const sf::RectangleShape& shape);
@@ -31,6 +33,8 @@ private:
     sf::Vector2f m_position {0.f, 0.f};
     sf::RectangleShape m_shape;
     sf::Color m_color;
+
+    const sf::Font * m_font = nullptr;
     sf::Text m_text;
 
 };

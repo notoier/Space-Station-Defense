@@ -32,11 +32,8 @@ bool Game::init(GameCreateInfo& createInfo)
        static_cast<float>(createInfo.screenHeight)
    });
 
-    // Negro con alpha (ajusta el 150 a tu gusto: 100–180 suele ir bien)
     m_pauseOverlay.setFillColor(PAUSED_BACKGROUND_COLOR);
 
-
-    // unique_ptr owns the World
     m_world = std::make_unique<World>();
     const bool loadOk = m_world->load();
 
@@ -63,9 +60,9 @@ bool Game::isRunning() const
 
 void Game::update(uint32_t deltaMilliseconds)
 {
-    // Check if user closed the window
     for (auto event = sf::Event(); m_window->pollEvent(event);)
     {
+        // Check if user closed the window
         if (event.type == sf::Event::Closed)
         {
             m_window->close();
@@ -102,8 +99,6 @@ void Game::update(uint32_t deltaMilliseconds)
     if (m_world)
     {
         m_world->setAimWorld(mouseWorld);
-
-        // Update scene here
         m_world->update(static_cast<float>(deltaMilliseconds));
     }
 }

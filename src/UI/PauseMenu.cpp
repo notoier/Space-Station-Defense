@@ -10,6 +10,7 @@
 
 #include "UI/Button.h"
 #include "Utils/Constants.h"
+#include "Utils/MathUtils.h"
 
 PauseMenu::PauseMenu()
 {
@@ -33,46 +34,43 @@ bool PauseMenu::init()
     m_window_shape.setOutlineThickness(2.f);
     m_window_shape.setOutlineColor(OUTLINE_COLOR);
 
-
-    // Button size (relative to panel)
     const sf::Vector2f buttonSize{
         size.x * BUTTON_SIZE_PERCENTAGE.x,
-        size.y * 0.12f // 12% of panel height per button (adjust if needed)
+        size.y * BUTTON_SIZE_PERCENTAGE.y
     };
 
     sf::RectangleShape buttonShape(buttonSize);
     buttonShape.setOutlineThickness(2.f);
     buttonShape.setOutlineColor(OUTLINE_COLOR);
 
-    // Column layout inside panel
     constexpr int buttonCount = 3;
-    const float spacing = size.y * 0.04f; // vertical spacing
+    const float spacing = size.y * 0.04f;
     const float totalHeight = buttonCount * buttonSize.y + (buttonCount - 1) * spacing;
 
-    // Starting Y so the whole column is vertically centered inside the panel
     const float startY = m_position.y + (size.y - totalHeight) * 0.5f;
 
-    // X so buttons are centered horizontally inside the panel
     const float x = m_position.x + (size.x - buttonSize.x) * 0.5f;
+
+    if (sf::Font font; font.loadFromFile("data/fonts/rush_driver_italic.otf"))
+    {
+        m_font = font;
+        m_text.scale(2,2);
+        m_text.setFont(m_font);
+        m_text.setString("Paused");
+        centerText(m_text, m_window_shape);
+
+        sf::Vector2f fontPosition = {m_text.getPosition().x , m_text.getPosition().y - m_window_shape.getSize().y * 0.35f};
+        m_text.setPosition(fontPosition);
+    }
+    else
+    {
+        std::cerr << "Font loading failed" << std::endl;
+    }
 
     // Create buttons
     createButton({x, startY + 0 * (buttonSize.y + spacing)}, buttonShape, labels[0], [this]() { return resume(); });
     createButton({x, startY + 1 * (buttonSize.y + spacing)}, buttonShape, labels[1], [this]() { return settings(); });
     createButton({x, startY + 2 * (buttonSize.y + spacing)}, buttonShape, labels[2], [this]() { return quit(); });
-
-    sf::Font font;
-    if (!font.loadFromFile("data/fonts/rush_driver_italic.otf"))
-    {
-        std::cerr << "Font loading failed" << std::endl;
-    }
-
-    sf::Vector2f fontPosition = {m_position.x + size.x * 0.33f, m_position.y + spacing * 0.5f};
-
-    m_font = font;
-    m_text.scale(2,2);
-    m_text.setFont(m_font);
-    m_text.setString("Paused");
-    m_text.setPosition(fontPosition);
 
     return true;
 }

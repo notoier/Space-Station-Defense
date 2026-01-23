@@ -5,7 +5,9 @@
 #ifndef SPACESTATIONDEFENSE_MATHUTILS_H
 #define SPACESTATIONDEFENSE_MATHUTILS_H
 #include "SFML/Graphics/Rect.hpp"
+#include "SFML/Graphics/Shape.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "SFML/Graphics/Text.hpp"
 
 float dot (const sf::Vector2f& a, const sf::Vector2f& b);
 float lengthSq(const sf::Vector2f& v);
@@ -18,5 +20,9 @@ bool SegmentCircleCollision(const sf::Vector2f& start, const sf::Vector2f& end, 
 bool AABBCollision(const sf::FloatRect& a, const sf::FloatRect& b);
 bool SegmentAABBCollision(const sf::Vector2f& segStart, const sf::Vector2f& segEnd, const sf::FloatRect& box);
 bool SegmentPointWithinRadius(const sf::Vector2f& start, const sf::Vector2f& end, const sf::Vector2f& center, float radius);
+
+// ===== UI ===== \\
+
+void centerText(sf::Text& text, const sf::Shape& shape);
 
 #endif //SPACESTATIONDEFENSE_MATHUTILS_H

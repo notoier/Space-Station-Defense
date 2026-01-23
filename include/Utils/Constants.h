@@ -15,7 +15,7 @@ const auto BUTTON_PRESSED_COLOR = sf::Color(200, 200, 200);
 
 // UI Layout
 const sf::Vector2f PAUSE_MENU_SIZE_PERCENTAGE = {0.33f, 0.8f};
-const sf::Vector2f BUTTON_SIZE_PERCENTAGE = {0.8f, 0.2f};
+const sf::Vector2f BUTTON_SIZE_PERCENTAGE = {0.8f, 0.12f};
 
 // Gameplay
 const sf::Vector2f STATION_POSITION = {SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f};

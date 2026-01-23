@@ -29,8 +29,6 @@ void World::update(const float deltaMilliseconds)
 
 	}
 
-
-
 	m_enemyPool.forEachActive([&](Enemy& e)
 	{
 		e.update(deltaMilliseconds);

@@ -31,11 +31,11 @@ void Menu::createButton(const sf::Vector2f position, const sf::RectangleShape& s
     const std::function<void()>& func)
 {
     Button button;
-    button.init(position, shape, text, func);
+    button.init(position, shape, text, m_font, func);
     m_buttons.push_back(std::make_unique<Button>(button));
 }
 
-void Menu::onLeftClick(sf::Vector2f mousePos)
+void Menu::onLeftClick(const sf::Vector2f mousePos) const
 {
     for (const auto& button : m_buttons)
     {

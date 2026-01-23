@@ -4,7 +4,6 @@
 
 #include "Utils/MathUtils.h"
 #include <algorithm>
-#include "SFML/Graphics/Rect.hpp"
 
 bool BoxCircumferenceCollision(const sf::Vector2f boxPosition, const float boxSize, const sf::Vector2f circlePosition, const float radius)
 {
@@ -113,4 +112,21 @@ bool SegmentPointWithinRadius(const sf::Vector2f& start, const sf::Vector2f& end
 
     const sf::Vector2f closest = start + d * t;
     return lengthSq(center - closest) <= radius * radius;
+}
+
+void centerText(sf::Text& text, const sf::Shape& shape)
+{
+    const sf::FloatRect textBounds = text.getLocalBounds();
+
+    text.setOrigin(
+        textBounds.left + textBounds.width  * 0.5f,
+        textBounds.top  + textBounds.height * 0.5f
+    );
+
+    const sf::FloatRect shapeBounds = shape.getGlobalBounds();
+
+    text.setPosition({
+        shapeBounds.left + shapeBounds.width  * 0.5f,
+        shapeBounds.top  + shapeBounds.height * 0.5f
+    });
 }

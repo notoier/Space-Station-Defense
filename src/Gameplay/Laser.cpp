@@ -35,15 +35,10 @@ Laser::Laser(const Stats& stats)
 void Laser::update(float dtMilliseconds)
 {
     if (!m_enabled) return;
-    // Direction from station to mouse
 
-    // Gameplay: apply DPS to first enemy hit along the beam (simple version)
-    // Implement in World: raycast-like check (line vs enemy bounds) and return Enemy*
-    // Enemy* hit = world.findFirstEnemyHit(ctx.originWorld, end);
-    // if (hit) hit->applyDamage(m_stats.damagePerSecond * dtSeconds);
-
-    // remove once you use it
-
+    // Gameplay: apply Raw Damage to every enemy hit along the beam
+    // if (hit) hit->applyDamage(m_stats.damage);
+    // TODO: Upgrades
 }
 
 void Laser::render(sf::RenderWindow& window)
