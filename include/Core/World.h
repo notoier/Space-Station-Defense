@@ -2,6 +2,7 @@
 #define SPACESTATIONDEFENSE_WORLD_H
 
 #include <cstdint>
+#include <functional>
 #include <list>
 
 #include "ObjectPool.h"
@@ -37,10 +38,13 @@ public:
 
 	[[nodiscard]] const Station* getStation() const;
 
+	void setOnDamageFunction(const std::function<void(float damage)>& func);
+
 	void setAimWorld(const sf::Vector2f& aimWorld);
 	void onLeftClick();
 
 protected:
+	std::function<void(float damage)> m_onHealthDamageReceived;
 	ObjectPool<Enemy> m_enemyPool {128};
 	std::unique_ptr<Station> m_station;
 

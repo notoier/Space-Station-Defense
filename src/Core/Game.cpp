@@ -34,7 +34,12 @@ bool Game::init(GameCreateInfo& createInfo)
 
     m_pauseOverlay.setFillColor(PAUSED_BACKGROUND_COLOR);
 
+    m_ui = new UI();
+    m_ui->init();
     m_world = std::make_unique<World>();
+
+    m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
+
     const bool loadOk = m_world->load();
 
     return loadOk;
@@ -103,10 +108,13 @@ void Game::update(uint32_t deltaMilliseconds)
     }
 }
 
+
+
 void Game::render()
 {
     m_window->clear(BACKGROUND_COLOR);
     m_world->render(*m_window);
+    m_ui->render(*m_window);
 
     // Dark overlay
     if (m_isPaused)
@@ -162,4 +170,9 @@ void Game::quitGame()
 void Game::openSettings()
 {
     std::cout << "Opening Settings..." << std::endl;
+}
+
+void Game::damageReceived(const float healthPercentage)
+{
+    m_ui->healthDown(healthPercentage);
 }

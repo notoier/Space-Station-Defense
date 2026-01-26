@@ -33,7 +33,14 @@ void World::update(const float deltaMilliseconds)
 	{
 		e.update(deltaMilliseconds);
 
-		if (e.isTargetReached() || !e.isAlive())
+		if (e.isTargetReached())
+		{
+			m_enemyPool.release(&e);
+			m_station->receiveDamage(e.getDamage());
+			m_onHealthDamageReceived(m_station->getHealth() / m_station->getMaxHealth());
+		}
+
+		if (!e.isAlive())
 		{
 			m_enemyPool.release(&e);
 		}
@@ -91,6 +98,11 @@ void World::spawnEnemy(const Enemy::EnemyDescriptor& baseDesc,
 const Station* World::getStation() const
 {
 	return m_station.get();
+}
+
+void World::setOnDamageFunction(const std::function<void(float damage)>& func)
+{
+	m_onHealthDamageReceived = func;
 }
 
 void World::setAimWorld(const sf::Vector2f& aimWorld)

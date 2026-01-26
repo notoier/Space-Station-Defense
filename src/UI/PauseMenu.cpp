@@ -19,7 +19,6 @@ PauseMenu::PauseMenu()
 
 bool PauseMenu::init()
 {
-    std::cout << "PauseMenu::init" << std::endl;
     const char* labels[3] = {"Resume", "Settings", "Quit"};
 
     m_position = sf::Vector2f(SCREEN_WIDTH * PAUSE_MENU_SIZE_PERCENTAGE.x,

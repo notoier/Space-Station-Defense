@@ -43,6 +43,11 @@ void Enemy::setTarget(const sf::Vector2f& target, const float targetRadius)
     m_targetRadius = targetRadius;
 }
 
+float Enemy::getDamage()
+{
+    return m_damage;
+}
+
 bool Enemy::isTargetReached() const
 {
     return BoxCircumferenceCollision(m_position, m_size, m_targetPosition, m_targetRadius);

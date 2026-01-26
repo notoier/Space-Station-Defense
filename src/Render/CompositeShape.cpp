@@ -28,14 +28,20 @@ void CompositeShape::update(float dtSeconds)
     }
 }
 
-CompositeShape::Part& CompositeShape::getPart(std::size_t index)
+CompositeShape::Part* CompositeShape::getPart(std::size_t index)
 {
-    return m_parts.at(index);
+    if (index >= m_parts.size())
+        return nullptr;
+
+    return &m_parts[index];
 }
 
-const CompositeShape::Part& CompositeShape::getPart(std::size_t index) const
+const CompositeShape::Part* CompositeShape::getPart(std::size_t index) const
 {
-    return m_parts.at(index);
+    if (index >= m_parts.size())
+        return nullptr;
+
+    return &m_parts[index];
 }
 
 void CompositeShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -55,6 +61,7 @@ void CompositeShape::draw(sf::RenderTarget& target, sf::RenderStates states) con
             std::sin(angleRad) * p.orbitRadius
         );
 
+        localStates.transform.translate(p.localOffset);
         localStates.transform.translate(orbitOffset);
         localStates.transform.rotate(p.localRotationDeg);
 

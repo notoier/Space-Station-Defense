@@ -43,8 +43,8 @@ public:
 
     void update(float dtSeconds);
 
-    Part& getPart(std::size_t index);
-    const Part& getPart(std::size_t index) const;
+    Part* getPart(std::size_t index);
+    const Part* getPart(std::size_t index) const;
 
     CompositeShape() = default;
     ~CompositeShape() override = default;

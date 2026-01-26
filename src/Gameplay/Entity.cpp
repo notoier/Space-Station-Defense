@@ -16,6 +16,7 @@ bool Entity::init(const EntityDescriptor& descriptor)
     // Initialize base GameObject data
     m_position = descriptor.position;
     m_health   = descriptor.health;
+    m_maxHealth = descriptor.health;
 
     // Build visual representation based on descriptor
     buildVisual(descriptor.visualType);
@@ -50,6 +51,16 @@ void Entity::receiveDamage(const float damage)
 float Entity::getSize() const
 {
     return m_size;
+}
+
+float Entity::getHealth() const
+{
+    return m_health;
+}
+
+float Entity::getMaxHealth() const
+{
+    return m_maxHealth;
 }
 
 sf::Vector2f Entity::getCenter() const

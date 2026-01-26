@@ -32,6 +32,8 @@ public:
     void receiveDamage(float damage);
     float getSize() const;
 
+    float getHealth() const;
+    float getMaxHealth() const;
 
     sf::Vector2f getCenter() const;
 
@@ -43,6 +45,7 @@ protected:
 
 protected:
     float m_health{1};
+    float m_maxHealth{1};
     bool m_isAlive{true};
     float m_size{0.f};
 
