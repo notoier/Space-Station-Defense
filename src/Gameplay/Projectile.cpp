@@ -14,6 +14,7 @@ bool Projectile::init(const ProjectileDescriptor& d)
     m_shape.setRadius(d.radius);
     m_shape.setOrigin(d.radius, d.radius);
     m_shape.setPosition(d.position);
+    m_shape.setFillColor(sf::Color::Red);
 
     return true;
 }

@@ -23,6 +23,12 @@ public:
         float fireCooldownSec = 1.f;
     };
 
+    struct CannonUpgrades
+    {
+        float damageUpgrade = 0.f;
+        float cooldownReduction = 0.f;
+    };
+
     Cannon() = default;
     explicit Cannon(const CannonDesc& desc);
 
@@ -30,8 +36,10 @@ public:
     void render(sf::RenderWindow& window) override;
     void shoot() override;
 
-    float getDamage() override { return m_desc.damage; }
+    float getDamage() override;
     void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool) override;
+
+    const CannonUpgrades& getUpgrades() const { return m_upgrades; };
 
 private:
     sf::Vector2f computeOrbitPosition() const;
@@ -40,6 +48,7 @@ private:
 
 private:
     CannonDesc m_desc{};
+    CannonUpgrades m_upgrades{};
 
     float m_orbitAngleDeg = 0.f;
     float m_retargetTimerSec = 0.f;

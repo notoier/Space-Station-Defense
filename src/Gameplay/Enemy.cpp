@@ -58,3 +58,13 @@ bool Enemy::isTargetReached() const
 {
     return BoxCircumferenceCollision(m_position, m_size, m_targetPosition, m_targetRadius);
 }
+
+sf::FloatRect Enemy::getBounds() const
+{
+    return {
+        m_position.x - m_size * 0.5f,
+        m_position.y - m_size * 0.5f,
+        m_size,
+        m_size
+        };
+}

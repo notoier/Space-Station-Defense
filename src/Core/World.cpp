@@ -35,6 +35,7 @@ void World::update(const float deltaMilliseconds)
 {
 	const float dtSeconds = deltaMilliseconds / 1000.f;
 
+	// 1) Station + weapons
 	if (m_station)
 	{
 		Weapon::WeaponContext ctx;
@@ -42,6 +43,7 @@ void World::update(const float deltaMilliseconds)
 		ctx.aimWorld    = m_station->getAimWorld();
 
 		m_station->update(deltaMilliseconds);
+
 		for (auto& w : m_station->getWeapons())
 		{
 			w->setWeaponContext(ctx);
@@ -50,14 +52,7 @@ void World::update(const float deltaMilliseconds)
 		}
 	}
 
-
-	m_projectilePool.forEachActive([&](Projectile& p)
-	{
-		p.update(dtSeconds);
-		if (!p.isAlive())
-			m_projectilePool.release(&p);
-	});
-
+	// 2) Enemies update + release
 	m_enemyPool.forEachActive([&](Enemy& e)
 	{
 		e.update(deltaMilliseconds);
@@ -67,14 +62,50 @@ void World::update(const float deltaMilliseconds)
 			m_enemyPool.release(&e);
 			m_station->receiveDamage(e.getDamage());
 			m_onHealthDamageReceived(m_station->getHealth() / m_station->getMaxHealth());
+			return;
 		}
 
-		else if (!e.isAlive())
+		if (!e.isAlive())
 		{
 			m_enemyPool.release(&e);
+			return;
 		}
 	});
+
+	// 3) Projectiles update + release
+	m_projectilePool.forEachActive([&](Projectile& p)
+	{
+		p.update(dtSeconds);
+
+		if (!p.isAlive())
+		{
+			m_projectilePool.release(&p);
+			return;
+		}
+	});
+
+	// 4) Collisions (projectile vs enemy)
+	m_projectilePool.forEachActive([&](Projectile& p)
+	{
+		if (!p.isAlive())
+			return;
+
+		const sf::FloatRect pb = p.getBounds();
+
+		m_enemyPool.forEachActive([&](Enemy& e)
+		{
+			if (!p.isAlive() || !e.isAlive())
+				return;
+
+			if (pb.intersects(e.getBounds()))
+			{
+				e.receiveDamage(p.getDamage());
+				p.kill();
+			}
+		});
+	});
 }
+
 
 void World::render(sf::RenderWindow& window)
 {

@@ -6,15 +6,14 @@
 
 #include <cmath>
 #include <iostream>
+#include <ostream>
 
 #include "SFML/Graphics/RenderWindow.hpp"
-#include "SFML/Window/Event.hpp"
 #include "Utils/MathUtils.h"
-
-class World;
 
 Laser::Laser(const LaserBaseStats& stats)
 {
+    m_coolTime = m_coolDown;
     m_stats = stats;
     m_enabled = false;
     m_beam = sf::VertexArray(sf::Quads, 4);
@@ -22,11 +21,15 @@ Laser::Laser(const LaserBaseStats& stats)
 
 void Laser::update(float dtMilliseconds)
 {
-    if (!m_enabled) return;
+    if (!m_OnCoolDown) return;
 
-    // Gameplay: apply Raw Damage to every enemy hit along the beam
-    // if (hit) hit->applyDamage(m_stats.damage);
-    // TODO: Upgrades
+    m_coolTime -= dtMilliseconds;
+    std::cout << m_coolTime << std::endl;
+    if (m_coolTime <= 0)
+    {
+        m_OnCoolDown = false;
+        m_coolTime = m_coolDown;
+    }
 }
 
 void Laser::render(sf::RenderWindow& window)
@@ -59,10 +62,12 @@ void Laser::beamSetUp(const sf::Vector2f start, const sf::Vector2f end, const sf
 
 void Laser::shoot()
 {
+    if (m_OnCoolDown) return;
     setEnabled(true);
     const sf::Vector2f dir = normalize(m_context.aimWorld - m_context.originWorld);
-    const sf::Vector2f end = m_context.originWorld + dir * m_stats.range;
+    const sf::Vector2f end = m_context.originWorld + dir * (m_stats.range + m_upgrades.rangeUpgrade);
     m_fired = true;
+    m_OnCoolDown = true;
 
    // applyEffectToEnemies(m_enemyPool);
 
@@ -72,7 +77,7 @@ void Laser::shoot()
 
 float Laser::getDamage()
 {
-    return m_stats.damage;
+    return m_stats.damage + m_upgrades.damageUpgrade;
 }
 
 void Laser::applyEffectToEnemies(ObjectPool<Enemy>& enemyPool )

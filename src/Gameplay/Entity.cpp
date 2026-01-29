@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <ostream>
+#include <random>
 
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
@@ -72,7 +73,7 @@ bool Entity::isAlive() const
     return m_isAlive;
 }
 
-void Entity::buildVisual(VisualType type)
+void Entity::buildVisual(const VisualType type)
 {
     m_visual = CompositeShape(); // Reset previous visual
 
@@ -93,6 +94,10 @@ void Entity::buildVisual(VisualType type)
 
         case VisualType::BasicEnemySquares:
         {
+            std::random_device rd;
+            std::mt19937 mt(rd());
+            std::uniform_real_distribution<double> dist(-250, 250);
+
             auto makeSquare = [](const float size)
             {
                 auto r = std::make_unique<sf::RectangleShape>(sf::Vector2f(size, size));
@@ -112,7 +117,7 @@ void Entity::buildVisual(VisualType type)
                 auto& p = m_visual.addPart(makeSquare(size), size);
                 p.orbitRadius = 0.f;               // stays in center
                 p.orbitSpeedDegPerSec = 0.f;
-                p.spinSpeedDegPerSec = 220.f;      // spins fast
+                p.spinSpeedDegPerSec = static_cast<float>(dist(mt));      // spins fast
             }
 
             // Square 2 (orbits)
@@ -121,8 +126,8 @@ void Entity::buildVisual(VisualType type)
                 auto& p = m_visual.addPart(makeSquare(size), size);
                 p.orbitRadius = 14.f;
                 p.orbitPhaseDeg = 0.f;
-                p.orbitSpeedDegPerSec = 140.f;     // orbit speed
-                p.spinSpeedDegPerSec = -260.f;     // spin opposite
+                p.orbitSpeedDegPerSec = static_cast<float>(dist(mt));     // orbit speed
+                p.spinSpeedDegPerSec = static_cast<float>(dist(mt));     // spin opposite
             }
 
             // Square 3 (orbits differently)
@@ -131,8 +136,8 @@ void Entity::buildVisual(VisualType type)
                 auto& p = m_visual.addPart(makeSquare(size), size);
                 p.orbitRadius = 20.f;
                 p.orbitPhaseDeg = 120.f;           // different axis/phase
-                p.orbitSpeedDegPerSec = -90.f;     // opposite orbit direction
-                p.spinSpeedDegPerSec = 320.f;
+                p.orbitSpeedDegPerSec = static_cast<float>(dist(mt));     // opposite orbit direction
+                p.spinSpeedDegPerSec = static_cast<float>(dist(mt));
             }
 
             break;

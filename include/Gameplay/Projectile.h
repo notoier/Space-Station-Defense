@@ -16,9 +16,9 @@ public:
     {
         sf::Vector2f position {0.f, 0.f};
         sf::Vector2f velocity {0.f, 0.f};
-        float radius = 3.f;
-        float damage = 1.f;
-        float maxLifeSeconds = 3.f;
+        float radius = 10.f;
+        float damage = 0.5f;
+        float maxLifeSeconds = 4.f;
     };
 
     bool init(const ProjectileDescriptor& d);

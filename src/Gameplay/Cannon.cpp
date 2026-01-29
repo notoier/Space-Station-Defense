@@ -136,7 +136,7 @@ void Cannon::shoot()
     if (lengthSq(dir) < 0.000001f)
         return;
 
-    m_fireTimerSec = m_desc.fireCooldownSec;
+    m_fireTimerSec = m_desc.fireCooldownSec - m_upgrades.cooldownReduction;
 
     Projectile::ProjectileDescriptor pd;
     pd.position = m_cannonPosWorld;
@@ -146,6 +146,11 @@ void Cannon::shoot()
     pd.maxLifeSeconds = m_desc.projectileLifeSec;
 
     m_spawnProjectile(pd);
+}
+
+float Cannon::getDamage()
+{
+    return m_desc.damage + m_upgrades.damageUpgrade;
 }
 
 void Cannon::render(sf::RenderWindow& window)

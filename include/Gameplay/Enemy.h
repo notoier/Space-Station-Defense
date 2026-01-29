@@ -26,7 +26,7 @@ public:
     float getDamage ();
     void receiveDamage(float damage) override;
     bool isTargetReached() const;
-
+    sf::FloatRect getBounds() const;
 
 protected:
     float m_damage {1.f};

@@ -54,8 +54,9 @@ int main()
     cannonStats.fireCooldownSec = 1.f;
     cannonStats.orbitRadius = 75.f;
     cannonStats.targetMaxDistance = 10000.f;
-    cannonStats.orbitSpeedDegPerSec = 90.f;
-    cannonStats.projectileSpeed = 2.f;
+    cannonStats.orbitSpeedDegPerSec = 180.f;
+    cannonStats.projectileSpeed = 150.f;
+    cannonStats.projectileLifeSec = 8.f;
 
     station->addWeapon(std::make_unique<Cannon>(cannonStats));
 
@@ -65,7 +66,7 @@ int main()
     Enemy::EnemyDescriptor enemyDesc;
     enemyDesc.health = 1;
     enemyDesc.visualType = Entity::VisualType::BasicEnemySquares;
-    enemyDesc.velocity = sf::Vector2f(60.f, 0.f);
+    enemyDesc.velocity = sf::Vector2f(25.f, 0.f);
 
     World::Wave wave1;
     wave1.amountOfEnemies = 10;
@@ -73,6 +74,7 @@ int main()
 
     world->addWave(wave1);
     world->spawnEnemy(stationDesc.position, stationDesc.radius);
+    world->load();
 
     sf::Clock clock;
 

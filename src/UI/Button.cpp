@@ -14,7 +14,6 @@ void Button::init(const sf::Vector2f position, const sf::RectangleShape& shape, 
     setShape(shape);
 
     m_font = &font;
-    std::cout << m_font << std::endl;
     m_text.setFont(*m_font);
     setText(text);
     m_text.setCharacterSize(28);
