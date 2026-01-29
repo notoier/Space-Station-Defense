@@ -68,7 +68,11 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/UI/Menu.cpp
         include/UI/Menu.h
         src/UI/UI.cpp
-        include/UI/UI.h)
+        include/UI/UI.h
+        src/Gameplay/Cannon.cpp
+        include/Gameplay/Cannon.h
+        src/Gameplay/Projectile.cpp
+        include/Gameplay/Projectile.h)
 
 # Copy game data/ next to the executable
 add_custom_command(TARGET SpaceStationDefense POST_BUILD

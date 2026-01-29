@@ -130,3 +130,43 @@ void centerText(sf::Text& text, const sf::Shape& shape)
         shapeBounds.top  + shapeBounds.height * 0.5f
     });
 }
+
+sf::Vector2f normalize(const sf::Vector2f& v)
+{
+    const float lenSq = dot(v, v);
+    if (lenSq < 0.000001f) return {0.f, 0.f};
+    const float invLen = 1.f / std::sqrt(lenSq);
+    return {v.x * invLen, v.y * invLen};
+}
+
+sf::Vector2f rotateDeg(const sf::Vector2f& v, const float deg)
+{
+    const float rad = deg * 3.14159265359f / 180.f;
+    const float c = std::cos(rad);
+    const float s = std::sin(rad);
+    return {v.x * c - v.y * s, v.x * s + v.y * c};
+}
+
+float radToDeg(const float r)
+{
+    return r * 180.f / M_PI;
+}
+
+float angleDegFromDirection(const sf::Vector2f& direction)
+{
+    return radToDeg(std::atan2(direction.y, direction.x));
+}
+
+float wrapDeg(float a)
+{
+    while (a < -180.f) a += 360.f;
+    while (a >  180.f) a -= 360.f;
+    return a;
+}
+
+float moveTowardsAngleDeg(const float current, const float target, const float maxDelta)
+{
+    float delta = wrapDeg(target - current);
+    if (std::abs(delta) <= maxDelta) return target;
+    return current + (delta > 0.f ? maxDelta : -maxDelta);
+}

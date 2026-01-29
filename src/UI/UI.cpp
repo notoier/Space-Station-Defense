@@ -25,7 +25,6 @@ void UI::init()
     m_healthBar.addPart(std::move(healthBarFill), 100, {0,0});
     m_healthBar.setPosition(healthBarPos);
 
-
     /* BARRIER BAR */
     const sf::Vector2f barrierBarPos = healthBarPos + sf::Vector2f{0,50};
 
@@ -60,6 +59,7 @@ void UI::healthDown(const float healthPercentage)
 
 void UI::healthUp(float health)
 {
+
 }
 
 void UI::barrierDown(const float barrierPercentage)

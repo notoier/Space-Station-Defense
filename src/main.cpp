@@ -11,6 +11,7 @@
 #include <cstdlib>   // rand
 #include <cstdint>
 
+#include "Gameplay/Cannon.h"
 #include "Gameplay/Laser.h"
 
 int main()
@@ -41,12 +42,22 @@ int main()
     station->init(stationDesc);
 
     // Create laser weapon and add it to the station
-    Laser::Stats laserStats;
+    Laser::LaserBaseStats laserStats;
     laserStats.range = 600.f;
     laserStats.damage = 0.5f;
     laserStats.width = 25.f;
 
     station->addWeapon(std::make_unique<Laser>(laserStats)); // Laser active by default
+
+    Cannon::CannonDesc cannonStats;
+    cannonStats.damage = 0.5f;
+    cannonStats.fireCooldownSec = 1.f;
+    cannonStats.orbitRadius = 75.f;
+    cannonStats.targetMaxDistance = 10000.f;
+    cannonStats.orbitSpeedDegPerSec = 90.f;
+    cannonStats.projectileSpeed = 2.f;
+
+    station->addWeapon(std::make_unique<Cannon>(cannonStats));
 
     world->setStation(std::move(station));
 
@@ -56,7 +67,12 @@ int main()
     enemyDesc.visualType = Entity::VisualType::BasicEnemySquares;
     enemyDesc.velocity = sf::Vector2f(60.f, 0.f);
 
-    world->spawnEnemy(enemyDesc, stationDesc.position, stationDesc.radius);
+    World::Wave wave1;
+    wave1.amountOfEnemies = 10;
+    wave1.descriptor = enemyDesc;
+
+    world->addWave(wave1);
+    world->spawnEnemy(stationDesc.position, stationDesc.radius);
 
     sf::Clock clock;
 

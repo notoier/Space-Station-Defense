@@ -41,7 +41,6 @@ void Entity::render(sf::RenderWindow& window)
 void Entity::receiveDamage(const float damage)
 {
     m_health -= damage;
-    std::cout << "Health: " << m_health << std::endl;
     if (m_health <= 0)
     {
         m_isAlive = false;

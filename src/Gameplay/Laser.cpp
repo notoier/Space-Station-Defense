@@ -13,19 +13,7 @@
 
 class World;
 
-static float length(const sf::Vector2f& vec)
-{
-    return std::sqrt((vec.x * vec.x) + (vec.y * vec.y));
-}
-
-static sf::Vector2f normalize(const sf::Vector2f& vec)
-{
-    const float len = length(vec);
-    if (len < 0.0001f) return {0.f, 0.f};
-    return vec / len;
-}
-
-Laser::Laser(const Stats& stats)
+Laser::Laser(const LaserBaseStats& stats)
 {
     m_stats = stats;
     m_enabled = false;
@@ -76,6 +64,8 @@ void Laser::shoot()
     const sf::Vector2f end = m_context.originWorld + dir * m_stats.range;
     m_fired = true;
 
+   // applyEffectToEnemies(m_enemyPool);
+
     // Visual
     beamSetUp(m_context.originWorld, end, dir);
 }
@@ -85,7 +75,7 @@ float Laser::getDamage()
     return m_stats.damage;
 }
 
-void Laser::applyEffectToEnemies(ObjectPool<Enemy>& enemyPool)
+void Laser::applyEffectToEnemies(ObjectPool<Enemy>& enemyPool )
 {
     if (!m_enabled || !m_fired)
         return;

@@ -21,7 +21,7 @@ void Station::render(sf::RenderWindow& window)
 {
     Entity::render(window);
 
-    for (const auto& w : m_weapons)
+    for (auto& w : m_weapons)
         w->render(window);
 }
 
@@ -36,9 +36,9 @@ const sf::Vector2f& Station::getAimWorld() const
     return m_aimWorld;
 }
 
-void Station::onLeftClick()
+void Station::onLeftClick(ObjectPool<Enemy>& object_pool)
 {
-    shootLaser();
+    shootLaser(object_pool);
 }
 
 
@@ -57,7 +57,7 @@ void Station::addWeapon(std::unique_ptr<Weapon> weapon)
     m_weapons.push_back(std::move(weapon));
 }
 
-void Station::shootLaser()
+void Station::shootLaser(ObjectPool<Enemy>& object_pool)
 {
     for (auto& w : m_weapons)
     {
@@ -66,5 +66,15 @@ void Station::shootLaser()
             laser->shoot();
             return;
         }
+    }
+}
+
+void Station::receiveDamage(const float damage)
+{
+    Entity::receiveDamage(damage);
+
+    if (!m_isAlive)
+    {
+        //TODO: Game Over
     }
 }

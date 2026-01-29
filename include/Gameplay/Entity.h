@@ -25,17 +25,18 @@ public:
         VisualType visualType{VisualType::StationCircle};
     };
 
-public:
     bool init(const EntityDescriptor& descriptor);
     void update(float deltaMilliseconds) override;
     void render(sf::RenderWindow& window) override;
-    void receiveDamage(float damage);
-    float getSize() const;
+    virtual void receiveDamage(float damage);
 
+    float getSize() const;
     float getHealth() const;
     float getMaxHealth() const;
-
     sf::Vector2f getCenter() const;
+
+    uint32_t getUID() const { return m_uid; }
+    void setUID(const uint32_t uid) { m_uid = uid; }
 
     bool isAlive() const;
 
@@ -43,11 +44,11 @@ protected:
     // Allows derived classes (Enemy, Station, etc.) to customize visuals if needed.
     void buildVisual(VisualType type);
 
-protected:
     float m_health{1};
     float m_maxHealth{1};
     bool m_isAlive{true};
     float m_size{0.f};
+    uint32_t m_uid = 0;
 
     CompositeShape m_visual;
 };

@@ -24,11 +24,12 @@ public:
     std::vector<std::unique_ptr<Weapon>>& getWeapons();
     const std::vector<std::unique_ptr<Weapon>>& getWeapons() const;
     void addWeapon(std::unique_ptr<Weapon> weapon);
-    void shootLaser();
+    void shootLaser(ObjectPool<Enemy>& object_pool);
+    void receiveDamage(float damage) final;
 
     void setAimWorld(const sf::Vector2f& aim);
     [[nodiscard]] const sf::Vector2f& getAimWorld() const;
-    void onLeftClick();
+    void onLeftClick(ObjectPool<Enemy>& object_pool);
 
 protected:
     std::vector<std::unique_ptr<Weapon>> m_weapons;

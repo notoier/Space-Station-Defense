@@ -36,11 +36,14 @@ public:
     virtual void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool) = 0;
 
     void setWeaponContext(const WeaponContext ctx) {m_context = ctx;}
+    void setSpawnProjectileFn(std::function<void(const Projectile::ProjectileDescriptor&)> fn) { m_spawnProjectile = std::move(fn); }
 
 protected:
+
+    bool m_enabled = true;
+    std::function<void(const Projectile::ProjectileDescriptor&)> m_spawnProjectile;
     CompositeShape m_shape;
     WeaponContext m_context;
-    bool m_enabled = true;
 };
 
 

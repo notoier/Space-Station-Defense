@@ -48,6 +48,12 @@ float Enemy::getDamage()
     return m_damage;
 }
 
+void Enemy::receiveDamage(const float damage)
+{
+    Entity::receiveDamage(damage);
+    // TODO: DECREASE ENEMY COUNT
+}
+
 bool Enemy::isTargetReached() const
 {
     return BoxCircumferenceCollision(m_position, m_size, m_targetPosition, m_targetRadius);
