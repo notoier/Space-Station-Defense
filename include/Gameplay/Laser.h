@@ -35,6 +35,8 @@ public:
     float getDamage() override;
     void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool) override;
 
+    void setUpgrades(const LaserUpgrades& u);
+
     void setEnabled(bool enable);
 
     const LaserBaseStats& getStats() const { return m_stats; };

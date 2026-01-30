@@ -11,6 +11,7 @@
 
 #include "UI/PauseMenu.h"
 #include "UI/UI.h"
+#include "UI/UpgradeMenu.h"
 
 namespace sf
 {
@@ -48,16 +49,22 @@ public:
 private:
 
     bool m_isPaused = false;
+    bool m_upgradesOpened = false;
 
     void pauseGame();
     void resumeGame();
     void togglePause();
+    void toggleUpgradeMenu();
+    void closeUpgradeMenu();
+    void openUpgradeMenu();
     void quitGame();
     void openSettings();
     void damageReceived(float healthPercentage);
+    void updateCurrency(int currency);
 
     PauseMenu* m_pauseWindow{nullptr};
     UI* m_ui{nullptr};
+    UpgradeMenu* m_upgradeWindow{nullptr};
     sf::RectangleShape m_pauseOverlay;
     sf::RenderWindow* m_window{ nullptr };
     std::unique_ptr<World> m_world{ nullptr };

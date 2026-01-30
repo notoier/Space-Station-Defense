@@ -4,15 +4,31 @@
 
 #include "UI/UI.h"
 
+#include <iostream>
+#include <ostream>
+
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Utils/Constants.h"
+#include "Utils/MathUtils.h"
 
-void UI::init()
+bool UI::init()
 {
     /* HEALTH BAR */
     const sf::Vector2f healthBarPos = {1400, 950 };
+    initHealthBar(healthBarPos);
 
+    /* BARRIER BAR */
+    const sf::Vector2f barrierBarPos = healthBarPos + sf::Vector2f{0,50};
+    initBarrierBar(barrierBarPos);
+
+    initText();
+
+    return true;
+}
+
+void UI::initHealthBar(const sf::Vector2f pos)
+{
     auto healthBarOutline = std::make_unique<sf::RectangleShape>(UI_BAR_SIZE);;
     healthBarOutline->setFillColor(sf::Color::Transparent);
     healthBarOutline->setOutlineColor(OUTLINE_COLOR);
@@ -23,11 +39,11 @@ void UI::init()
 
     m_healthBar.addPart(std::move(healthBarOutline), 100, {-2.5, -2.5});
     m_healthBar.addPart(std::move(healthBarFill), 100, {0,0});
-    m_healthBar.setPosition(healthBarPos);
+    m_healthBar.setPosition(pos);
+}
 
-    /* BARRIER BAR */
-    const sf::Vector2f barrierBarPos = healthBarPos + sf::Vector2f{0,50};
-
+void UI::initBarrierBar(const sf::Vector2f pos)
+{
     auto barrierBarOutline = std::make_unique<sf::RectangleShape>(UI_BAR_SIZE);;
     barrierBarOutline->setFillColor(sf::Color::Transparent);
     barrierBarOutline->setOutlineColor(OUTLINE_COLOR);
@@ -38,15 +54,25 @@ void UI::init()
 
     m_barrierBar.addPart(std::move(barrierBarOutline), 100, {-2.5, -2.5});
     m_barrierBar.addPart(std::move(barrierBarFill), 100, {0,0});
-    m_barrierBar.setPosition(barrierBarPos);
-
-    /* TODO: MONEY TEXT */
+    m_barrierBar.setPosition(pos);
 }
 
-void UI::render(sf::RenderWindow& window)
+void UI::initText()
+{
+    initFont("mc.ttf");
+    m_text.setFont(m_font);
+    m_text.setString("$: 0");
+    m_text.scale(2,2);
+
+    const sf::Vector2f fontPosition = {(SCREEN_WIDTH - m_text.getGlobalBounds().width) * 0.5f, m_text.getPosition().y + m_text.getGlobalBounds().height};
+    m_text.setPosition(fontPosition);
+}
+
+void UI::render(sf::RenderWindow& window) const
 {
     window.draw (m_healthBar);
     window.draw (m_barrierBar);
+    if (!m_text.getString().isEmpty()) window.draw (m_text);
 }
 
 void UI::healthDown(const float healthPercentage)
@@ -74,7 +100,8 @@ void UI::barrierUp(float barrier)
 {
 }
 
-void UI::updateMoney(float money)
+void UI::updateCurrency(const int money)
 {
-
+    m_text.setString("$: " + std::to_string(money));
 }
+

@@ -22,6 +22,7 @@ public:
     Menu();
     virtual ~Menu();
     virtual bool init();
+    bool initFont(const std::string& fontName);
     virtual void render(sf::RenderWindow& window) const = 0;
 
     void setMenuTitle(const sf::Text& text);

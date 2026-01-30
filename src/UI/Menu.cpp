@@ -14,6 +14,20 @@ Menu::~Menu() = default;
 
 bool Menu::init()
 {
+    return initFont("font.TTF");
+}
+
+bool Menu::initFont(const std::string& fontName)
+{
+    if (sf::Font font; font.loadFromFile("data/fonts/" + fontName))
+    {
+        m_font = font;
+    }
+    else
+    {
+        std::cerr << "Font loading failed" << std::endl;
+        return false;
+    }
     return true;
 }
 

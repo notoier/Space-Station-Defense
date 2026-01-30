@@ -24,7 +24,6 @@ void Laser::update(float dtMilliseconds)
     if (!m_OnCoolDown) return;
 
     m_coolTime -= dtMilliseconds;
-    std::cout << m_coolTime << std::endl;
     if (m_coolTime <= 0)
     {
         m_OnCoolDown = false;
@@ -55,7 +54,7 @@ void Laser::beamSetUp(const sf::Vector2f start, const sf::Vector2f end, const sf
 
     for (int i = 0; i < 4; ++i)
     {
-        m_beam[i].color = sf::Color::Red;
+        m_beam[i].color = (i == 1 || i == 2) ? LASER_INTERNAL_COLOR : LASER_EXTERNAL_COLOR;
     }
 
 }
@@ -115,6 +114,11 @@ void Laser::applyEffectToEnemies(ObjectPool<Enemy>& enemyPool )
         }
     });
 
+}
+
+void Laser::setUpgrades(const LaserUpgrades& u)
+{
+    m_upgrades = u;
 }
 
 

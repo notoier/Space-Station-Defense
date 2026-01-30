@@ -71,5 +71,4 @@ private:
     std::vector<Item> m_items;
 };
 
-
 #endif //SPACESTATIONDEFENSE_OBJECTPOOL_H

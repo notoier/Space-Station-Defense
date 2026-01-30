@@ -15,6 +15,8 @@ bool Enemy::init(const EnemyDescriptor& descriptor)
     m_size = descriptor.size;
     m_damage = descriptor.damage;
 
+    m_isAlive = true;
+
     return Entity::init(descriptor);
 }
 
@@ -51,7 +53,7 @@ float Enemy::getDamage()
 void Enemy::receiveDamage(const float damage)
 {
     Entity::receiveDamage(damage);
-    // TODO: DECREASE ENEMY COUNT
+    if (!m_isAlive && m_onDeath) m_onDeath();
 }
 
 bool Enemy::isTargetReached() const
@@ -67,4 +69,9 @@ sf::FloatRect Enemy::getBounds() const
         m_size,
         m_size
         };
+}
+
+void Enemy::setOnDeathFunction(const std::function<void()>& func)
+{
+    m_onDeath = func;
 }

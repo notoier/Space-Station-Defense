@@ -45,7 +45,8 @@ file(GLOB_RECURSE SRC_SOURCES CONFIGURE_DEPENDS
 # Ensure main is included even if it's already in SRC_SOURCES
 set(PROJECT_SOURCES ${MAIN_SOURCE} ${SRC_SOURCES}
         src/UI/PauseMenu.cpp
-        include/UI/PauseMenu.h)
+        include/UI/PauseMenu.h
+        include/Gameplay/UpgradeID.h)
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/Core/Game.cpp
@@ -72,7 +73,9 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/Gameplay/Cannon.cpp
         include/Gameplay/Cannon.h
         src/Gameplay/Projectile.cpp
-        include/Gameplay/Projectile.h)
+        include/Gameplay/Projectile.h
+        src/UI/UpgradeMenu.cpp
+        include/UI/UpgradeMenu.h)
 
 # Copy game data/ next to the executable
 add_custom_command(TARGET SpaceStationDefense POST_BUILD

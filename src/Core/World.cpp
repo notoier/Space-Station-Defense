@@ -1,6 +1,7 @@
 // src/Core/World.cpp
 #include "Core/World.h"
 
+#include <iostream>
 #include <random>
 
 #include "Utils/Constants.h"
@@ -53,24 +54,33 @@ void World::update(const float deltaMilliseconds)
 	}
 
 	// 2) Enemies update + release
+	std::vector<Enemy*> toRelease;
+	toRelease.reserve(32);
+
 	m_enemyPool.forEachActive([&](Enemy& e)
 	{
-		e.update(deltaMilliseconds);
+	    e.update(deltaMilliseconds);
 
-		if (e.isTargetReached())
-		{
-			m_enemyPool.release(&e);
-			m_station->receiveDamage(e.getDamage());
-			m_onHealthDamageReceived(m_station->getHealth() / m_station->getMaxHealth());
-			return;
-		}
+	    if (e.isTargetReached())
+	    {
+	        m_station->receiveDamage(e.getDamage());
+	        e.receiveDamage(e.getHealth());
+	        if (m_onHealthDamageReceived)
+	    		m_onHealthDamageReceived(m_station->getHealth() / m_station->getMaxHealth());
 
-		if (!e.isAlive())
-		{
-			m_enemyPool.release(&e);
-			return;
-		}
+	    	toRelease.push_back(&e);
+	        return;
+	    }
+
+	    if (!e.isAlive())
+	    {
+	        toRelease.push_back(&e);
+	        return;
+	    }
 	});
+
+	for (Enemy* e : toRelease)
+	    m_enemyPool.release(e);
 
 	// 3) Projectiles update + release
 	m_projectilePool.forEachActive([&](Projectile& p)
@@ -104,6 +114,11 @@ void World::update(const float deltaMilliseconds)
 			}
 		});
 	});
+
+	if (!m_waveActive)
+	{
+		spawnEnemy();
+	}
 }
 
 
@@ -133,7 +148,7 @@ void World::setStation(std::unique_ptr<Station> station)
 	m_station = std::move(station);
 }
 
-void World::spawnEnemy(const sf::Vector2f targetPos, const float targetSize)
+void World::spawnEnemy()
 {
 	std::random_device rd;
 	std::mt19937 mt(rd());
@@ -143,6 +158,9 @@ void World::spawnEnemy(const sf::Vector2f targetPos, const float targetSize)
 
 	// If no more waves defined, then repeat last wave
 	const int currentWave = m_currentWave < waves.size() ? m_currentWave : static_cast<int>(waves.size() - 1);
+	std::cout << "Current wave: " << currentWave << std::endl;
+	std::cout << "Amount (wave): "<< waves[currentWave].amountOfEnemies << std::endl;
+
 	for (int i = 0; i < waves[currentWave].amountOfEnemies; ++i)
 	{
 		Enemy::EnemyDescriptor desc = waves[currentWave].descriptor;
@@ -157,16 +175,22 @@ void World::spawnEnemy(const sf::Vector2f targetPos, const float targetSize)
 		const Enemy* enemy = m_enemyPool.acquire([&](Enemy& e)
 		{
 			e.init(desc);
-			e.setTarget(targetPos, targetSize);
+			e.setTarget(m_station_pos, m_station_size);
 			e.setUID(g_enemyUID++);
+			e.setOnDeathFunction([this]() {onEnemyDeath(); });
+
+			std::cout << "M_Amount: " << m_amountOfEnemies << std::endl;
 		});
 
 		if (!enemy)
+		{
+			std::cout << "Pool llena" << std::endl;
 			break;// pool lleno
-
+		}
 		m_amountOfEnemies++;
 	}
 
+	m_waveActive = true;
 	m_currentWave++;
 }
 
@@ -180,6 +204,17 @@ void World::setOnDamageFunction(const std::function<void(float damage)>& func)
 	m_onHealthDamageReceived = func;
 }
 
+void World::setOnEnemyDeathFunction(const std::function<void(int currency)>& func)
+{
+	m_onEnemyDeath = func;
+}
+
+void World::setTarget(const sf::Vector2f targetPos, const float targetSize)
+{
+	m_station_pos = targetPos;
+	m_station_size = targetSize;
+}
+
 void World::setAimWorld(const sf::Vector2f& aimWorld)
 {
 	if (m_station)
@@ -191,6 +226,32 @@ void World::addWave(const Wave& wave)
 	waves.push_back(wave);
 }
 
+void World::addCurrency(const int money)
+{
+	m_currency += money;
+}
+
+void World::subCurrency(const int money)
+{
+	m_currency -= money;
+}
+
+int World::getCurrency() const
+{
+	return m_currency;
+}
+
+void World::onEnemyDeath()
+{
+	m_currency++;
+	m_amountOfEnemies--;
+	if (m_amountOfEnemies <= 0){
+		m_waveActive = false; // New wave
+	}
+
+	m_onEnemyDeath(m_currency);
+}
+
 void World::onLeftClick()
 {
 	if (m_station)
@@ -198,4 +259,65 @@ void World::onLeftClick()
 		m_station->onLeftClick(m_enemyPool);
 	}
 
+}
+
+void World::applyUpgrade(const UpgradeId id)
+{
+	switch (id)
+	{
+		case UpgradeId::Laser_Damage:
+			m_laserUpgrades.damageUpgrade += 0.5f;
+			break;
+
+		case UpgradeId::Laser_Range:
+			m_laserUpgrades.rangeUpgrade += 50.f;
+			break;
+
+		case UpgradeId::Cannon_Damage:
+			m_cannonUpgrades.damageUpgrade += 0.5f;
+
+		case UpgradeId::Cannon_FireRate:
+			m_cannonUpgrades.cooldownReduction += 0.15f;
+
+		// ToDO: Barrier
+
+		default:
+			break;
+	}
+
+	if (m_station)
+	{
+		for (auto& w : m_station->getWeapons())
+		{
+			if (auto* laser = dynamic_cast<Laser*>(w.get()))
+				laser->setUpgrades(m_laserUpgrades);
+			else if (auto* cannon = dynamic_cast<Cannon*>(w.get()))
+				cannon->setUpgrades(m_cannonUpgrades);
+			// ToDo: Barrier upgrades
+		}
+	}
+}
+
+int World::getUpgradeCost(const UpgradeId id) const
+{
+	switch (id)
+	{
+	case UpgradeId::Laser_Damage: return 50;
+	case UpgradeId::Laser_Range:  return 75;
+	default: return 999999;
+	}
+}
+
+bool World::tryBuyUpgrade(const UpgradeId id)
+{
+	const int cost = getUpgradeCost(id);
+	if (m_currency < cost)
+		return false;
+
+	m_currency -= cost;
+	applyUpgrade(id);
+
+	// m_onCurrencyChanged(m_currency);
+
+	return true;
 }

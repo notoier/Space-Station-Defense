@@ -13,6 +13,8 @@ const auto PAUSED_BACKGROUND_COLOR = sf::Color(5, 5, 10, 135);
 const auto OUTLINE_COLOR = sf::Color(255, 255, 255);
 const auto BUTTON_PRESSED_COLOR = sf::Color(200, 200, 200);
 
+const auto LASER_EXTERNAL_COLOR = sf::Color(255, 0, 0, 200);
+const auto LASER_INTERNAL_COLOR = sf::Color(200, 0, 0, 200);
 // UI Layout
 const sf::Vector2f PAUSE_MENU_SIZE_PERCENTAGE = {0.33f, 0.8f};
 const sf::Vector2f BUTTON_SIZE_PERCENTAGE = {0.8f, 0.12f};

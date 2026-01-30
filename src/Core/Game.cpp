@@ -17,11 +17,13 @@
 
 bool Game::init(GameCreateInfo& createInfo)
 {
+    /* Regular window */
     assert(m_window == nullptr && m_world == nullptr && "Game is already initialized, we are about to leak memory");
 
     m_window = new sf::RenderWindow({ createInfo.screenWidth, createInfo.screenHeight }, createInfo.gameTitle);
     m_window->setFramerateLimit(createInfo.frameRateLimit);
 
+    /* Pause Menu */
     m_pauseWindow = new PauseMenu();
     m_pauseWindow->setResumeFunc([this]() {resumeGame();});
     m_pauseWindow->setSettingsFunc([this]() {openSettings();});
@@ -34,11 +36,26 @@ bool Game::init(GameCreateInfo& createInfo)
 
     m_pauseOverlay.setFillColor(PAUSED_BACKGROUND_COLOR);
 
+    /* Regular UI */
     m_ui = new UI();
     m_ui->init();
-    m_world = std::make_unique<World>();
 
+    /* Upgrade  menu */
+    m_upgradeWindow = new UpgradeMenu();
+    m_upgradeWindow->init();
+
+    m_upgradeWindow->setOnUpgradeSelected([this](UpgradeId id)
+    {
+        // Forward to world or an upgrade system
+        if (m_world)
+            m_world->tryBuyUpgrade(id);
+    });
+
+
+    /* World */
+    m_world = std::make_unique<World>();
     m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
+    m_world -> setOnEnemyDeathFunction([this](const int currency) {updateCurrency(currency);});
 
     const bool loadOk = m_world->load();
 
@@ -73,9 +90,14 @@ void Game::update(uint32_t deltaMilliseconds)
             m_window->close();
         }
 
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P)
+        if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::P || event.key.code == sf::Keyboard::Escape))
         {
             togglePause();
+        }
+
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab)
+        {
+            toggleUpgradeMenu();
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -88,6 +110,10 @@ void Game::update(uint32_t deltaMilliseconds)
                     const sf::Vector2f mouseWorld = m_window->mapPixelToCoords(mousePx);
                     m_pauseWindow->onLeftClick(mouseWorld);
 
+                    continue;
+                } else if (m_upgradesOpened)
+                {
+                    //TODO:
                     continue;
                 }
                 m_world->onLeftClick();
@@ -108,8 +134,6 @@ void Game::update(uint32_t deltaMilliseconds)
     }
 }
 
-
-
 void Game::render()
 {
     m_window->clear(BACKGROUND_COLOR);
@@ -117,12 +141,17 @@ void Game::render()
     m_ui->render(*m_window);
 
     // Dark overlay
-    if (m_isPaused)
+    if (m_isPaused || m_upgradesOpened)
         m_window->draw(m_pauseOverlay);
 
     if (m_pauseWindow && m_pauseWindow->isEnabled())
     {
         m_pauseWindow->render(*m_window);
+    }
+
+    else if (m_upgradesOpened && m_upgradeWindow->isEnabled())
+    {
+        m_upgradeWindow->render(*m_window);
     }
 
     m_window->display();
@@ -147,6 +176,7 @@ const sf::RenderWindow& Game::getWindow() const
 
 void Game::pauseGame()
 {
+    closeUpgradeMenu();
     m_isPaused = true;
     if (m_pauseWindow) m_pauseWindow->enable(true);
 }
@@ -162,6 +192,24 @@ void Game::togglePause()
     m_isPaused ? resumeGame() : pauseGame();
 }
 
+void Game::toggleUpgradeMenu()
+{
+    m_upgradesOpened ? closeUpgradeMenu() : openUpgradeMenu();
+}
+
+void Game::closeUpgradeMenu()
+{
+    m_upgradesOpened = false;
+    if (m_upgradeWindow) m_upgradeWindow->enable(false);
+}
+
+void Game::openUpgradeMenu()
+{
+    resumeGame();
+    m_upgradesOpened = true;
+    if (m_upgradeWindow) m_upgradeWindow->enable(true);
+}
+
 void Game::quitGame()
 {
     std::cout << "Quitting Game..." << std::endl;
@@ -175,4 +223,9 @@ void Game::openSettings()
 void Game::damageReceived(const float healthPercentage)
 {
     m_ui->healthDown(healthPercentage);
+}
+
+void Game::updateCurrency(const int currency)
+{
+    m_ui->updateCurrency(currency);
 }

@@ -40,7 +40,7 @@ public:
     void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool) override;
 
     const CannonUpgrades& getUpgrades() const { return m_upgrades; };
-
+    void setUpgrades(const CannonUpgrades& u);
 private:
     sf::Vector2f computeOrbitPosition() const;
 

@@ -4,10 +4,12 @@
 
 #ifndef SPACESTATIONDEFENSE_WEAPON_H
 #define SPACESTATIONDEFENSE_WEAPON_H
-#include "Core/World.h"
+#include "Projectile.h"
 #include "Render/CompositeShape.h"
 #include "Utils/Constants.h"
-
+#include "Core/ObjectPool.h"
+#include <functional>
+#include "Gameplay/Enemy.h"
 
 namespace sf
 {
@@ -20,6 +22,13 @@ class Weapon
 {
 
 public:
+
+    enum WeaponType
+    {
+        Laser,
+        Cannon,
+        Barrier,
+    };
 
     struct WeaponContext
     {

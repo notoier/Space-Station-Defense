@@ -73,7 +73,8 @@ int main()
     wave1.descriptor = enemyDesc;
 
     world->addWave(wave1);
-    world->spawnEnemy(stationDesc.position, stationDesc.radius);
+    world->setTarget(stationDesc.position, stationDesc.radius);
+    world->spawnEnemy();
     world->load();
 
     sf::Clock clock;

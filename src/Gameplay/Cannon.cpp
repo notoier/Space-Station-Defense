@@ -28,6 +28,11 @@ Cannon::Cannon(const CannonDesc& desc)
     m_shape.addPart(std::move(r), size, {0,-size * 0.5});
 }
 
+void Cannon::setUpgrades(const CannonUpgrades& u)
+{
+    m_upgrades = u;
+}
+
 sf::Vector2f Cannon::computeOrbitPosition() const
 {
     const sf::Vector2f offset = rotateDeg({m_desc.orbitRadius, 0.f}, m_orbitAngleDeg);

@@ -4,6 +4,8 @@
 
 #ifndef SPACESTATIONDEFENSE_ENEMY_H
 #define SPACESTATIONDEFENSE_ENEMY_H
+#include <functional>
+
 #include "Entity.h"
 
 
@@ -27,8 +29,10 @@ public:
     void receiveDamage(float damage) override;
     bool isTargetReached() const;
     sf::FloatRect getBounds() const;
+    void setOnDeathFunction(const std::function<void()>& func);
 
 protected:
+    std::function<void()> m_onDeath;
     float m_damage {1.f};
     sf::Vector2f m_velocity {0.f, 0.f};
     sf::Vector2f m_targetPosition {0.f, 0.f};

@@ -50,9 +50,8 @@ bool PauseMenu::init()
 
     const float x = m_position.x + (size.x - buttonSize.x) * 0.5f;
 
-    if (sf::Font font; font.loadFromFile("data/fonts/rush_driver_italic.otf"))
+    if (Menu::init())
     {
-        m_font = font;
         m_text.scale(2,2);
         m_text.setFont(m_font);
         m_text.setString("Paused");
@@ -60,10 +59,6 @@ bool PauseMenu::init()
 
         sf::Vector2f fontPosition = {m_text.getPosition().x , m_text.getPosition().y - m_window_shape.getSize().y * 0.35f};
         m_text.setPosition(fontPosition);
-    }
-    else
-    {
-        std::cerr << "Font loading failed" << std::endl;
     }
 
     // Create buttons
