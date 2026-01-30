@@ -5,6 +5,8 @@
 #ifndef SPACESTATIONDEFENSE_ENTITY_H
 #define SPACESTATIONDEFENSE_ENTITY_H
 
+#include <string>
+
 #include "Gameplay/GameObject.h"
 #include "Render/CompositeShape.h"
 #include "SFML/Graphics/Shape.hpp"
@@ -17,6 +19,14 @@ public:
         StationCircle,
         BasicEnemySquares
     };
+
+    static VisualType parseVisualType(const std::string& s, const VisualType def)
+    {
+        if (s == "BasicEnemySquares") return VisualType::BasicEnemySquares;
+        if (s == "StationCircle") return VisualType::StationCircle;
+
+        return def;
+    }
 
     struct EntityDescriptor
     {

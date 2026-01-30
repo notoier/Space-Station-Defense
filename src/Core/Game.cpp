@@ -17,6 +17,8 @@
 
 bool Game::init(GameCreateInfo& createInfo)
 {
+
+
     /* Regular window */
     assert(m_window == nullptr && m_world == nullptr && "Game is already initialized, we are about to leak memory");
 
@@ -44,9 +46,8 @@ bool Game::init(GameCreateInfo& createInfo)
     m_upgradeWindow = new UpgradeMenu();
     m_upgradeWindow->init();
 
-    m_upgradeWindow->setOnUpgradeSelected([this](UpgradeId id)
+    m_upgradeWindow->setOnUpgradeSelected([this](const UpgradeId id)
     {
-        // Forward to world or an upgrade system
         if (m_world)
             m_world->tryBuyUpgrade(id);
     });
@@ -56,7 +57,6 @@ bool Game::init(GameCreateInfo& createInfo)
     m_world = std::make_unique<World>();
     m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
     m_world -> setOnEnemyDeathFunction([this](const int currency) {updateCurrency(currency);});
-
     const bool loadOk = m_world->load();
 
     return loadOk;
@@ -104,18 +104,23 @@ void Game::update(uint32_t deltaMilliseconds)
         {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
+                const sf::Vector2i mousePx = sf::Mouse::getPosition(*m_window);
+                const sf::Vector2f mouseWorld = m_window->mapPixelToCoords(mousePx);
+
+                /* Click on pause menu */
                 if (m_isPaused)
                 {
-                    const sf::Vector2i mousePx = sf::Mouse::getPosition(*m_window);
-                    const sf::Vector2f mouseWorld = m_window->mapPixelToCoords(mousePx);
                     m_pauseWindow->onLeftClick(mouseWorld);
-
-                    continue;
-                } else if (m_upgradesOpened)
-                {
-                    //TODO:
                     continue;
                 }
+
+                /* Click on upgrades menu */
+                if (m_upgradesOpened)
+                {
+                    m_upgradeWindow->onLeftClick(mouseWorld);
+                    continue;
+                }
+
                 m_world->onLeftClick();
             }
         }

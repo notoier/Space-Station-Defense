@@ -1,0 +1,31 @@
+﻿{
+  "waves": [
+    { "amount": 6,  "enemy": { "health": 1, "speed": 35, "size": 26, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 6,  "enemy": { "health": 1, "speed": 35, "size": 26, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 8,  "enemy": { "health": 1, "speed": 35, "size": 26, "damage": 1, "visualType": "BasicEnemySquares" } },
+
+    { "amount": 8,  "enemy": { "health": 1, "speed": 35, "size": 26, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 10, "enemy": { "health": 2, "speed": 45, "size": 28, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 10, "enemy": { "health": 2, "speed": 45, "size": 28, "damage": 1, "visualType": "BasicEnemySquares" } },
+
+    { "amount": 12, "enemy": { "health": 2, "speed": 55, "size": 28, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 12, "enemy": { "health": 2, "speed": 55, "size": 28, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 12, "enemy": { "health": 2, "speed": 55, "size": 28, "damage": 1, "visualType": "BasicEnemySquares" } },
+
+    { "amount": 15, "enemy": { "health": 2, "speed": 55, "size": 28, "damage": 1, "visualType": "BasicEnemySquares" } },
+    { "amount": 15, "enemy": { "health": 2, "speed": 65, "size": 30, "damage": 2, "visualType": "BasicEnemySquares" } },
+    { "amount": 15, "enemy": { "health": 3, "speed": 65, "size": 30, "damage": 2, "visualType": "BasicEnemySquares" } },
+
+    { "amount": 16, "enemy": { "health": 3, "speed": 75, "size": 30, "damage": 2, "visualType": "BasicEnemySquares" } },
+    { "amount": 18, "enemy": { "health": 4, "speed": 75, "size": 32, "damage": 2, "visualType": "BasicEnemySquares" } },
+    { "amount": 20, "enemy": { "health": 4, "speed": 75, "size": 32, "damage": 2, "visualType": "BasicEnemySquares" } },
+
+    { "amount": 22, "enemy": { "health": 4, "speed": 75, "size": 34, "damage": 3, "visualType": "BasicEnemySquares" } },
+    { "amount": 24, "enemy": { "health": 4, "speed": 75, "size": 34, "damage": 3, "visualType": "BasicEnemySquares" } },
+    { "amount": 26, "enemy": { "health": 5, "speed": 75, "size": 36, "damage": 3, "visualType": "BasicEnemySquares" } },
+
+    { "amount": 28, "enemy": { "health": 5, "speed": 90, "size": 38, "damage": 4, "visualType": "BasicEnemySquares" } },
+    { "amount": 30, "enemy": { "health": 5, "speed": 90, "size": 40, "damage": 4, "visualType": "BasicEnemySquares" } },
+    { "amount": 32, "enemy": { "health": 5, "speed": 90, "size": 42, "damage": 5, "visualType": "BasicEnemySquares" } }
+  ]
+}

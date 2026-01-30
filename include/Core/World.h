@@ -50,7 +50,7 @@ public:
 	void setOnEnemyDeathFunction(const std::function<void(int currency)>& func);
 	void setTarget(sf::Vector2f targetPos, float targetSize);
 
-	void setAimWorld(const sf::Vector2f& aimWorld);
+	void setAimWorld(const sf::Vector2f& aimWorld) const;
 	void addWave(const Wave& wave);
 
 	void addCurrency(int money);
@@ -64,6 +64,11 @@ public:
 	bool tryBuyUpgrade(UpgradeId id);
 
 protected:
+
+	bool loadWavesFromJson(const std::string& filePath);
+	bool loadStationFromJson(const std::string& path);
+	void bindWeaponCallbacks();
+
 	int m_currentWave = 0;
 	int m_amountOfEnemies = 0;
 	int m_currency = 0;

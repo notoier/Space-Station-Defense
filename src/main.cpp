@@ -27,58 +27,7 @@ int main()
     if (!game.init(ci))
         return 1;
 
-    World* world = game.getWorld();
-    if (!world)
-        return 1;
-
-    // ========= STATION =========
-    Station::StationDescriptor stationDesc;
-    stationDesc.position = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
-    stationDesc.health = 20.f;
-    stationDesc.visualType = Entity::VisualType::StationCircle;
-    stationDesc.radius = 50.f;
-
-    auto station = std::make_unique<Station>();
-    station->init(stationDesc);
-
-    // Create laser weapon and add it to the station
-    Laser::LaserBaseStats laserStats;
-    laserStats.range = 600.f;
-    laserStats.damage = 0.5f;
-    laserStats.width = 25.f;
-
-    station->addWeapon(std::make_unique<Laser>(laserStats)); // Laser active by default
-
-    Cannon::CannonDesc cannonStats;
-    cannonStats.damage = 0.5f;
-    cannonStats.fireCooldownSec = 1.f;
-    cannonStats.orbitRadius = 75.f;
-    cannonStats.targetMaxDistance = 10000.f;
-    cannonStats.orbitSpeedDegPerSec = 180.f;
-    cannonStats.projectileSpeed = 150.f;
-    cannonStats.projectileLifeSec = 8.f;
-
-    station->addWeapon(std::make_unique<Cannon>(cannonStats));
-
-    world->setStation(std::move(station));
-
-    // ========= ENEMIES =========
-    Enemy::EnemyDescriptor enemyDesc;
-    enemyDesc.health = 1;
-    enemyDesc.visualType = Entity::VisualType::BasicEnemySquares;
-    enemyDesc.velocity = sf::Vector2f(25.f, 0.f);
-
-    World::Wave wave1;
-    wave1.amountOfEnemies = 10;
-    wave1.descriptor = enemyDesc;
-
-    world->addWave(wave1);
-    world->setTarget(stationDesc.position, stationDesc.radius);
-    world->spawnEnemy();
-    world->load();
-
     sf::Clock clock;
-
     while (game.isRunning())
     {
         const uint32_t deltaMs = static_cast<uint32_t>(clock.restart().asMilliseconds());

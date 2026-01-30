@@ -1,0 +1,30 @@
+﻿{
+  "station": {
+    "position": { "x": 960, "y": 540 },
+    "health": 20,
+    "radius": 50,
+    "visualType": "StationCircle"
+  },
+  "weapons": [
+    {
+      "type": "Laser",
+      "params": {
+        "range": 600,
+        "damage": 0.5,
+        "width": 25
+      }
+    },
+    {
+      "type": "Cannon",
+      "params": {
+        "damage": 0.5,
+        "fireCooldownSec": 2.0,
+        "orbitRadius": 75,
+        "targetMaxDistance": 10000,
+        "orbitSpeedDegPerSec": 180,
+        "projectileSpeed": 150,
+        "projectileLifeSec": 8
+      }
+    }
+  ]
+}
