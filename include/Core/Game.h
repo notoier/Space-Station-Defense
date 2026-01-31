@@ -59,7 +59,9 @@ private:
     void openUpgradeMenu();
     void quitGame();
     void openSettings();
-    void damageReceived(float healthPercentage);
+    void damageReceived(float healthPercentage) const;
+    void barrierDamageReceived(float healthPercentage) const;
+    void barrierHealthGained(float healthPercentage) const;
     void updateCurrency(int currency);
 
     PauseMenu* m_pauseWindow{nullptr};

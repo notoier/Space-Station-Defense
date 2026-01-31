@@ -25,6 +25,14 @@
         "projectileSpeed": 150,
         "projectileLifeSec": 8
       }
+    },
+    {
+      "type" : "Barrier",
+      "params": {
+        "regenCooldown" : 10,
+        "regenAmount" : 1,
+        "barrierHealth" : 10
+      }
     }
   ]
 }

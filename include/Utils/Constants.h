@@ -15,6 +15,11 @@ const auto BUTTON_PRESSED_COLOR = sf::Color(200, 200, 200);
 
 const auto LASER_EXTERNAL_COLOR = sf::Color(255, 0, 0, 200);
 const auto LASER_INTERNAL_COLOR = sf::Color(200, 0, 0, 200);
+
+const auto BARRIER_COLOR = sf::Color(100, 100, 255);
+const auto BARRIER_BAR_COLOR = sf::Color(100, 100, 255, 200);
+const auto HEALTH_BAR_COLOR = sf::Color(255,255,255, 200);
+
 // UI Layout
 const sf::Vector2f PAUSE_MENU_SIZE_PERCENTAGE = {0.33f, 0.8f};
 const sf::Vector2f BUTTON_SIZE_PERCENTAGE = {0.8f, 0.12f};
@@ -22,5 +27,6 @@ const sf::Vector2f UI_BAR_SIZE = {500, 25};
 
 // Gameplay
 const sf::Vector2f STATION_POSITION = {SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f};
-
+constexpr float BARRIER_SIZE = 100.f;
+constexpr float STATION_SIZE = 50.f;
 #endif //SPACESTATIONDEFENSE_CONSTS_H

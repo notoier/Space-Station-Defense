@@ -25,7 +25,7 @@ public:
     void update (float dt) override;
 
     void setTarget (const sf::Vector2f& target, float targetRadius);
-    float getDamage ();
+    float getDamage () const;
     void receiveDamage(float damage) override;
     bool isTargetReached() const;
     sf::FloatRect getBounds() const;

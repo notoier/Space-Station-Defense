@@ -3,6 +3,7 @@
 
 #include <functional>
 #include "ObjectPool.h"
+#include "Gameplay/Barrier.h"
 #include "Gameplay/Cannon.h"
 #include "Gameplay/Enemy.h"
 #include "Gameplay/Entity.h"
@@ -47,6 +48,8 @@ public:
 	[[nodiscard]] const Station* getStation() const;
 
 	void setOnDamageFunction(const std::function<void(float damage)>& func);
+	void setOnBarrierDamageFunction(const std::function<void(float damage)>& func);
+	void setOnBarrierHealthGainedFunction(const std::function<void(float health)>& func);
 	void setOnEnemyDeathFunction(const std::function<void(int currency)>& func);
 	void setTarget(sf::Vector2f targetPos, float targetSize);
 
@@ -60,13 +63,13 @@ public:
 	void onEnemyDeath();
 	void onLeftClick();
 	void applyUpgrade(UpgradeId id);
-	int getUpgradeCost(UpgradeId id) const;
+	[[nodiscard]] int getUpgradeCost(UpgradeId id) const;
 	bool tryBuyUpgrade(UpgradeId id);
 
 protected:
 
 	bool loadWavesFromJson(const std::string& filePath);
-	bool loadStationFromJson(const std::string& path);
+	bool loadStationAndWeaponsFromJson(const std::string& path);
 	void bindWeaponCallbacks();
 
 	int m_currentWave = 0;
@@ -75,15 +78,21 @@ protected:
 	bool m_waveActive = false;
 
 	sf::Vector2f m_station_pos;
-	float m_station_size;
+	float m_station_size{};
+
+	Barrier* m_barrier {nullptr};
 
 	Laser::LaserUpgrades m_laserUpgrades;
 	Cannon::CannonUpgrades m_cannonUpgrades;
 	// Barrier::BarrierUpgrades m_barrierUpgrades;
 
 	std::vector<Wave> waves;
+
+	std::function<void(float damage)> m_onBarrierDamageReceived;
+	std::function<void(float health)> m_onBarrierHealthGained;
 	std::function<void(float damage)> m_onHealthDamageReceived;
 	std::function<void(int currency)> m_onEnemyDeath;
+
 	ObjectPool<Enemy> m_enemyPool {128};
 	ObjectPool<Projectile> m_projectilePool {128};
 	std::unique_ptr<Station> m_station;

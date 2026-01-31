@@ -17,14 +17,13 @@ Cannon::Cannon(const CannonDesc& desc)
     m_fireTimerSec = 0.f;
     m_target = nullptr;
 
-
     /* Shape */
     constexpr float size = 25.f;
     std::unique_ptr<sf::Shape> r = std::make_unique<sf::RectangleShape>(sf::Vector2f(size, size));
     r->setOrigin({size * 0.5, size * 0.5});
     r->setFillColor(sf::Color::Transparent);
     r->setOutlineThickness(2.f);
-    r->setOutlineColor(sf::Color::White);
+    r->setOutlineColor(OUTLINE_COLOR);
     m_shape.addPart(std::move(r), size, {0,-size * 0.5});
 }
 

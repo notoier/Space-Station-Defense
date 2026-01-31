@@ -44,6 +44,7 @@ public:
     virtual float getDamage() = 0;
     virtual void applyEffectToEnemies(ObjectPool<Enemy>& enemyPool) = 0;
 
+    bool isEnabled() const { return m_enabled; }
     void setWeaponContext(const WeaponContext ctx) {m_context = ctx;}
     void setSpawnProjectileFn(std::function<void(const Projectile::ProjectileDescriptor&)> fn) { m_spawnProjectile = std::move(fn); }
 

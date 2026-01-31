@@ -4,8 +4,6 @@
 
 #include "Gameplay/Enemy.h"
 #include <cmath>
-#include <iostream>
-
 #include "Core/World.h"
 #include "Utils/MathUtils.h"
 
@@ -20,7 +18,7 @@ bool Enemy::init(const EnemyDescriptor& descriptor)
     return Entity::init(descriptor);
 }
 
-void Enemy::update(float dt)
+void Enemy::update(const float dt)
 {
     const float dtSeconds = dt / 1000.f;
 
@@ -45,7 +43,7 @@ void Enemy::setTarget(const sf::Vector2f& target, const float targetRadius)
     m_targetRadius = targetRadius;
 }
 
-float Enemy::getDamage()
+float Enemy::getDamage() const
 {
     return m_damage;
 }

@@ -17,8 +17,6 @@
 
 bool Game::init(GameCreateInfo& createInfo)
 {
-
-
     /* Regular window */
     assert(m_window == nullptr && m_world == nullptr && "Game is already initialized, we are about to leak memory");
 
@@ -56,6 +54,9 @@ bool Game::init(GameCreateInfo& createInfo)
     /* World */
     m_world = std::make_unique<World>();
     m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
+    m_world -> setOnBarrierDamageFunction([this](const float healthPercentage) {barrierDamageReceived(healthPercentage);});
+    m_world -> setOnBarrierHealthGainedFunction([this](const float healthPercentage) {barrierHealthGained(healthPercentage);});
+
     m_world -> setOnEnemyDeathFunction([this](const int currency) {updateCurrency(currency);});
     const bool loadOk = m_world->load();
 
@@ -225,9 +226,19 @@ void Game::openSettings()
     std::cout << "Opening Settings..." << std::endl;
 }
 
-void Game::damageReceived(const float healthPercentage)
+void Game::damageReceived(const float healthPercentage) const
 {
     m_ui->healthDown(healthPercentage);
+}
+
+void Game::barrierDamageReceived(const float healthPercentage) const
+{
+    m_ui->barrierDown(healthPercentage);
+}
+
+void Game::barrierHealthGained(const float healthPercentage) const
+{
+    m_ui->barrierUp(healthPercentage);
 }
 
 void Game::updateCurrency(const int currency)

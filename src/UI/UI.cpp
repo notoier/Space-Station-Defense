@@ -14,13 +14,14 @@
 
 bool UI::init()
 {
-    /* HEALTH BAR */
-    const sf::Vector2f healthBarPos = {1400, 950 };
-    initHealthBar(healthBarPos);
-
     /* BARRIER BAR */
-    const sf::Vector2f barrierBarPos = healthBarPos + sf::Vector2f{0,50};
+
+    const sf::Vector2f barrierBarPos = {1400, 950 };
     initBarrierBar(barrierBarPos);
+
+    /* HEALTH BAR */
+    const sf::Vector2f healthBarPos = barrierBarPos + sf::Vector2f{0,50};
+    initHealthBar(healthBarPos);
 
     initText();
 
@@ -35,7 +36,7 @@ void UI::initHealthBar(const sf::Vector2f pos)
     healthBarOutline->setOutlineThickness(1.0f);
 
     auto healthBarFill = std::make_unique<sf::RectangleShape>(UI_BAR_SIZE  - sf::Vector2f{5, 5});
-    healthBarFill->setFillColor(OUTLINE_COLOR);
+    healthBarFill->setFillColor(HEALTH_BAR_COLOR);
 
     m_healthBar.addPart(std::move(healthBarOutline), 100, {-2.5, -2.5});
     m_healthBar.addPart(std::move(healthBarFill), 100, {0,0});
@@ -50,7 +51,7 @@ void UI::initBarrierBar(const sf::Vector2f pos)
     barrierBarOutline->setOutlineThickness(1.0f);
 
     auto barrierBarFill = std::make_unique<sf::RectangleShape>(UI_BAR_SIZE - sf::Vector2f{5, 5});
-    barrierBarFill->setFillColor(OUTLINE_COLOR);
+    barrierBarFill->setFillColor(BARRIER_BAR_COLOR);
 
     m_barrierBar.addPart(std::move(barrierBarOutline), 100, {-2.5, -2.5});
     m_barrierBar.addPart(std::move(barrierBarFill), 100, {0,0});
@@ -80,7 +81,10 @@ void UI::healthDown(const float healthPercentage)
     sf::Vector2f newBarSize = (UI_BAR_SIZE - sf::Vector2f{5, 5});
     newBarSize.x *= healthPercentage;
     if (CompositeShape::Part* part = m_healthBar.getPart(1); part != nullptr)
+    {
         part->shape = std::make_unique<sf::RectangleShape>(newBarSize);
+        part->shape->setFillColor(HEALTH_BAR_COLOR);
+    }
 }
 
 void UI::healthUp(float health)
@@ -93,11 +97,21 @@ void UI::barrierDown(const float barrierPercentage)
     sf::Vector2f newBarSize = (UI_BAR_SIZE - sf::Vector2f{5, 5});
     newBarSize.x *= barrierPercentage;
     if (CompositeShape::Part* part = m_barrierBar.getPart(1); part != nullptr)
+    {
         part->shape = std::make_unique<sf::RectangleShape>(newBarSize);
+        part->shape->setFillColor(BARRIER_BAR_COLOR);
+    }
 }
 
-void UI::barrierUp(float barrier)
+void UI::barrierUp(const float barrierPercentage)
 {
+    sf::Vector2f newBarSize = (UI_BAR_SIZE - sf::Vector2f{5, 5});
+    newBarSize.x *= barrierPercentage;
+    if (CompositeShape::Part* part = m_barrierBar.getPart(1); part != nullptr)
+    {
+        part->shape = std::make_unique<sf::RectangleShape>(newBarSize);
+        part->shape->setFillColor(BARRIER_BAR_COLOR);
+    }
 }
 
 void UI::updateCurrency(const int money)

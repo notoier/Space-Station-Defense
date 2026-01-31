@@ -11,6 +11,7 @@
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "Utils/Constants.h"
 
 bool Entity::init(const EntityDescriptor& descriptor)
 {
@@ -81,13 +82,12 @@ void Entity::buildVisual(const VisualType type)
     {
         case VisualType::StationCircle:
         {
-            constexpr float radius = 50.f;
+            constexpr float radius = STATION_SIZE;
             auto circle = std::make_unique<sf::CircleShape>(radius);
-            circle->setOrigin(32.f, 32.f);
+            circle->setOrigin(radius, radius);
             circle->setFillColor(sf::Color::Transparent);
             circle->setOutlineThickness(2.f);
             circle->setOutlineColor(sf::Color::White);
-
             m_visual.addPart(std::move(circle), radius);
             break;
         }

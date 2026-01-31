@@ -13,6 +13,8 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "Utils/MathUtils.h"
+
 using json = nlohmann::json;
 
 bool World::load()
@@ -23,7 +25,7 @@ bool World::load()
 	m_amountOfEnemies = 0;
 
 	/* Station & Weapons Config */
-	if (!loadStationFromJson("data/config/station.json"))
+	if (!loadStationAndWeaponsFromJson("data/config/station.json"))
 	{
 		std::cout << "[World] Failed to load station.json. Using fallback.\n";
 
@@ -81,15 +83,11 @@ bool World::load()
 	{
 		for (auto& w : m_station->getWeapons())
 		{
-
-			w->setSpawnProjectileFn([this](const Projectile::ProjectileDescriptor& d)
-
+			if (auto* b = dynamic_cast<Barrier*>(w.get()))
 			{
-				m_projectilePool.acquire([&](Projectile& p)
-				{
-					p.init(d);
-				});
-			});
+				m_barrier = b;
+				m_barrier->setOnBarrierHealthGainedFunction(m_onBarrierHealthGained);
+			}
 		}
 	}
 
@@ -203,7 +201,7 @@ bool World::loadWavesFromJson(const std::string& filePath)
     return !waves.empty();
 }
 
-bool World::loadStationFromJson(const std::string& path)
+bool World::loadStationAndWeaponsFromJson(const std::string& path)
 {
 	std::ifstream f(path);
     if (!f.is_open())
@@ -257,7 +255,7 @@ bool World::loadStationFromJson(const std::string& path)
 
             const json params = wj.contains("params") && wj["params"].is_object() ? wj["params"] : json::object();
 
-            if (type == "Laser")
+			if (type == "Laser")
             {
                 Laser::LaserBaseStats s;
                 s.range  = getFloatOr(params, "range", 600.f);
@@ -266,7 +264,7 @@ bool World::loadStationFromJson(const std::string& path)
 
                 station->addWeapon(std::make_unique<Laser>(s));
             }
-            else if (type == "Cannon")
+			else if (type == "Cannon")
             {
                 Cannon::CannonDesc s;
                 s.damage             = getFloatOr(params, "damage", 0.5f);
@@ -279,7 +277,16 @@ bool World::loadStationFromJson(const std::string& path)
 
                 station->addWeapon(std::make_unique<Cannon>(s));
             }
-            else
+			else if (type == "Barrier")
+        	{
+				Barrier::BarrierDesc s;
+				s.regenCooldown  = getFloatOr(params, "regenCooldown", 10.f);
+				s.regenAmount    = getFloatOr(params, "regenAmount", 1.f);
+        		s.barrierHealth  = getFloatOr(params, "barrierHealth", 10.f);
+
+				station->addWeapon(std::make_unique<Barrier>(s));
+        	}
+			else
             {
                 std::cout << "[World] Unknown weapon type: " << type << "\n";
             }
@@ -316,12 +323,12 @@ void World::update(const float deltaMilliseconds)
 	if (m_station)
 	{
 		Weapon::WeaponContext ctx;
-		ctx.originWorld = m_station->getCenter();
+		ctx.originWorld = STATION_POSITION;
 		ctx.aimWorld    = m_station->getAimWorld();
 
 		m_station->update(deltaMilliseconds);
 
-		for (auto& w : m_station->getWeapons())
+		for (const auto& w : m_station->getWeapons())
 		{
 			w->setWeaponContext(ctx);
 			w->update(dtSeconds);
@@ -337,12 +344,31 @@ void World::update(const float deltaMilliseconds)
 	{
 	    e.update(deltaMilliseconds);
 
-	    if (e.isTargetReached())
+		bool barrierColision = false;
+		if (m_barrier->isEnabled())
+		{
+			barrierColision = BoxCircumferenceCollision(e.getPosition(), e.getSize(), STATION_POSITION, BARRIER_SIZE);
+		}
+
+	    if (e.isTargetReached() || barrierColision)
 	    {
-	        m_station->receiveDamage(e.getDamage());
-	        e.receiveDamage(e.getHealth());
-	        if (m_onHealthDamageReceived)
+			if (m_barrier && m_barrier->getHealth() > 0.f)
+	        {
+				const float remainingDamage = m_barrier->receiveDamage(e.getDamage());
+	        	if (m_onBarrierDamageReceived)
+	        		m_onBarrierDamageReceived(m_barrier->getHealth() / m_barrier->getMaxHealth());
+
+	        	m_station->receiveDamage(remainingDamage);
+	        }
+			else
+	        {
+	        	m_station->receiveDamage(e.getDamage());
+	        }
+			if (m_onHealthDamageReceived)
 	    		m_onHealthDamageReceived(m_station->getHealth() / m_station->getMaxHealth());
+
+
+	    	e.receiveDamage(e.getHealth());
 
 	    	toRelease.push_back(&e);
 	        return;
@@ -473,6 +499,16 @@ const Station* World::getStation() const
 void World::setOnDamageFunction(const std::function<void(float damage)>& func)
 {
 	m_onHealthDamageReceived = func;
+}
+
+void World::setOnBarrierDamageFunction(const std::function<void(float damage)>& func)
+{
+	m_onBarrierDamageReceived = func;
+}
+
+void World::setOnBarrierHealthGainedFunction(const std::function<void(float health)>& func)
+{
+	m_onBarrierHealthGained = func;
 }
 
 void World::setOnEnemyDeathFunction(const std::function<void(int currency)>& func)
