@@ -19,11 +19,18 @@ public:
         float barrierHealth = 0;
     };
 
+    struct BarrierUpgrades
+    {
+        float maxHealthUpgrade = 0;
+        float regenAmountUpgrade = 0;
+    };
+
     Barrier();
     Barrier(BarrierDesc desc);
     bool init(const BarrierDesc& barrierDescriptor);
     void update(float deltaSeconds) override;
     void render(sf::RenderWindow& window) override;
+    void setUpgrades(const BarrierUpgrades& u);
     float receiveDamage(float damage);
     float getHealth() const;
     float getMaxHealth() const;
@@ -38,11 +45,17 @@ public:
 private:
     void regenBarrier();
 
+    BarrierUpgrades m_upgrades;
+
+
     float m_regenCooldown{10};
     float m_regenTimer{0};
-    float m_regenAmount{10};
+    float m_regenAmount{1};
+    float m_baseRegenAmount{1};
+
     float m_health{10};
     float m_maxHealth{10};
+    float m_baseMaxHealth{10};
     bool  m_damaged{false};
 
     std::function<void(float health)> m_onBarrierHealthGained;

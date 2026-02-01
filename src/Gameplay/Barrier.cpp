@@ -23,8 +23,12 @@ bool Barrier::init(const BarrierDesc& barrierDescriptor)
 {
     m_regenCooldown = barrierDescriptor.regenCooldown;
     m_regenAmount = barrierDescriptor.regenAmount;
+    m_baseRegenAmount = barrierDescriptor.regenAmount;
+
     m_health = barrierDescriptor.barrierHealth;
+    m_baseMaxHealth = barrierDescriptor.barrierHealth;
     m_maxHealth = barrierDescriptor.barrierHealth;
+
 
     std::unique_ptr<sf::Shape> barrierShape = std::make_unique<sf::CircleShape>(BARRIER_SIZE);
     barrierShape->setOrigin(BARRIER_SIZE, BARRIER_SIZE);
@@ -50,9 +54,30 @@ void Barrier::render(sf::RenderWindow& window)
     window.draw(m_shape);
 }
 
+void Barrier::setUpgrades(const BarrierUpgrades& u)
+{
+    m_upgrades = u;
+
+    const float newMax = m_baseMaxHealth + m_upgrades.maxHealthUpgrade;
+    const float oldMax = m_maxHealth;
+
+    m_maxHealth = newMax;
+    m_regenAmount = m_baseRegenAmount + m_upgrades.regenAmountUpgrade;
+
+    // optional: keep same health percentage
+    if (oldMax > 0.f)
+    {
+        const float pct = m_health / oldMax;
+        m_health = m_maxHealth * pct;
+    }
+
+    // clamp
+    if (m_health > m_maxHealth) m_health = m_maxHealth;
+}
+
 void Barrier::regenBarrier()
 {
-    m_health = std::min(m_health + m_regenAmount, m_maxHealth);
+    m_health = std::min(m_health + m_regenAmount + m_upgrades.regenAmountUpgrade, m_maxHealth);
     m_regenTimer = 0.f;
     m_onBarrierHealthGained(m_health / m_maxHealth);
 }

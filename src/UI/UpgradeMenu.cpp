@@ -32,7 +32,7 @@ bool UpgradeMenu::init()
 
     /*  COLUMNS */
     constexpr float screenCenterX = 960.f;
-    constexpr float columnOffset  = 300.f;
+    constexpr float columnOffset  = 350.f;
     constexpr float startY        = 260.f;
 
     createColumn("LASER",   screenCenterX - columnOffset, startY, Weapon::Laser);
@@ -54,28 +54,40 @@ void UpgradeMenu::createColumn(const std::string& title, const float centerX, co
     text.setOrigin(bounds.width * 0.5f, bounds.height * 0.5f);
     text.setPosition(centerX, startY);
 
+    constexpr float BUTTON_WIDTH  = 300.f;
+    constexpr float BUTTON_HEIGHT = 90.f;
+
     m_columnTitles.push_back(text);
 
     sf::RectangleShape buttonShape;
-    buttonShape.setSize({ 220.f, 60.f });
+    buttonShape.setSize({ BUTTON_WIDTH, BUTTON_HEIGHT });
     buttonShape.setFillColor(sf::Color(60, 60, 60));
 
     const float buttonStartY = startY + 80.f;
-    constexpr float buttonSpacing = 80.f;
-    sf::Vector2f buttonPos = { centerX - 110.f, buttonStartY };
+    constexpr float buttonSpacing = BUTTON_HEIGHT + 50.f;
+    sf::Vector2f buttonPos = { centerX - BUTTON_WIDTH * 0.5f, buttonStartY };
 
-    UpgradeId upgrade1 = ((type == Weapon::Laser) ? UpgradeId::Laser_Damage : ((type == Weapon::Cannon) ? UpgradeId::Cannon_Damage : UpgradeId::Barrier_Health));
-    UpgradeId upgrade2 = ((type == Weapon::Laser) ? UpgradeId::Laser_Range : ((type == Weapon::Cannon) ? UpgradeId::Cannon_FireRate : UpgradeId::Barrier_Regen));
+    UpgradeId upgrade1 = ((type == Weapon::Laser) ? UpgradeId::Laser_Damage : ((type == Weapon::Cannon) ? UpgradeId::Cannon_Damage : UpgradeId::Barrier_MaxHealth));
+    UpgradeId upgrade2 = ((type == Weapon::Laser) ? UpgradeId::Laser_Range : ((type == Weapon::Cannon) ? UpgradeId::Cannon_FireRate : UpgradeId::Barrier_RegenAmount));
 
-    createButton(buttonPos, buttonShape, "Upgrade A\nCost: XXX",[this, upgrade1]()
+    m_buttonTexts[upgrade1] = "Loading...";
+    Button* b1 = createButton(buttonPos, buttonShape,m_buttonTexts[upgrade1].c_str(),[this, upgrade1]()
         {
             if (m_onUpgradeSelected) m_onUpgradeSelected(upgrade1);
-        });
+        }
+    );
+    m_upgradeButtons[upgrade1] = b1;
 
-    createButton({buttonPos.x, buttonPos.y + buttonSpacing}, buttonShape, "Upgrade B\nCost: XXX", [this, upgrade2]()
-        {
-            if (m_onUpgradeSelected) m_onUpgradeSelected(upgrade2);
-        });
+    m_buttonTexts[upgrade2] = "Loading...";
+    Button* b2 = createButton({buttonPos.x, buttonPos.y + buttonSpacing}, buttonShape,
+        m_buttonTexts[upgrade2].c_str(),
+    [this, upgrade2]()
+                {
+                    if (m_onUpgradeSelected) m_onUpgradeSelected(upgrade2);
+                }
+    );
+    m_upgradeButtons[upgrade2] = b2;
+
 }
 
 void UpgradeMenu::render(sf::RenderWindow& window) const
@@ -96,4 +108,24 @@ void UpgradeMenu::render(sf::RenderWindow& window) const
 void UpgradeMenu::setOnUpgradeSelected(const std::function<void(UpgradeId)>& fn)
 {
     m_onUpgradeSelected = fn;
+}
+
+void UpgradeMenu::setGetUpgradeTextFn(const std::function<std::string(UpgradeId)>& fn)
+{
+    m_getUpgradeText = fn;
+    refreshTexts();
+}
+
+void UpgradeMenu::refreshTexts()
+{
+    if (!m_getUpgradeText)
+        return;
+
+    for (auto& [id, button] : m_upgradeButtons)
+    {
+        if (!button) continue;
+
+        m_buttonTexts[id] = m_getUpgradeText(id);
+        button->setText(m_buttonTexts[id].c_str());
+    }
 }

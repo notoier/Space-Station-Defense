@@ -46,7 +46,7 @@ file(GLOB_RECURSE SRC_SOURCES CONFIGURE_DEPENDS
 set(PROJECT_SOURCES ${MAIN_SOURCE} ${SRC_SOURCES}
         src/UI/PauseMenu.cpp
         include/UI/PauseMenu.h
-        include/Gameplay/UpgradeID.h)
+        include/Gameplay/Upgrades.h)
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/Core/Game.cpp

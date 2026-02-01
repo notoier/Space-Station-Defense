@@ -29,7 +29,7 @@
     {
       "type" : "Barrier",
       "params": {
-        "regenCooldown" : 10,
+        "regenCooldown" : 40,
         "regenAmount" : 1,
         "barrierHealth" : 10
       }

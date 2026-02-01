@@ -40,24 +40,44 @@ bool Game::init(GameCreateInfo& createInfo)
     m_ui = new UI();
     m_ui->init();
 
+    /* World */
+    m_world = std::make_unique<World>();
+    m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
+    m_world -> setOnBarrierDamageFunction([this](const float healthPercentage) {barrierDamageReceived(healthPercentage);});
+    m_world -> setOnBarrierHealthGainedFunction([this](const float healthPercentage) {barrierHealthGained(healthPercentage);});
+    m_world -> setOnCurrencyUpdateFunction([this](const int currency) {updateCurrency(currency);});
+
     /* Upgrade  menu */
     m_upgradeWindow = new UpgradeMenu();
     m_upgradeWindow->init();
 
     m_upgradeWindow->setOnUpgradeSelected([this](const UpgradeId id)
     {
-        if (m_world)
-            m_world->tryBuyUpgrade(id);
+        if (!m_world) return;
+
+        if (m_world->tryBuyUpgrade(id))
+        {
+            m_upgradeWindow->refreshTexts();
+        }
     });
 
+    m_upgradeWindow->setGetUpgradeTextFn([this](const UpgradeId id) -> std::string
+    {
+        if (!m_world) return "???";
 
-    /* World */
-    m_world = std::make_unique<World>();
-    m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
-    m_world -> setOnBarrierDamageFunction([this](const float healthPercentage) {barrierDamageReceived(healthPercentage);});
-    m_world -> setOnBarrierHealthGainedFunction([this](const float healthPercentage) {barrierHealthGained(healthPercentage);});
+     const std::string name = m_world->getUpgradeName(id);
+     const int cost = m_world->getUpgradeCost(id);
+     const int level = m_world->getUpgradeLevel(id);
+     const int maxLevel = m_world->getUpgradeMaxLevel(id);
 
-    m_world -> setOnEnemyDeathFunction([this](const int currency) {updateCurrency(currency);});
+     if (level >= maxLevel)
+         return name + "\nMAX";
+
+     return name + "\nCost: " + std::to_string(cost) + "  Lv: " + std::to_string(level);
+    });
+
+    m_upgradeWindow->refreshTexts();
+
     const bool loadOk = m_world->load();
 
     return loadOk;
@@ -213,7 +233,11 @@ void Game::openUpgradeMenu()
 {
     resumeGame();
     m_upgradesOpened = true;
-    if (m_upgradeWindow) m_upgradeWindow->enable(true);
+    if (m_upgradeWindow)
+    {
+        m_upgradeWindow->enable(true);
+        m_upgradeWindow->refreshTexts();
+    }
 }
 
 void Game::quitGame()

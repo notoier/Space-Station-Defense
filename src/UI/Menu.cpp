@@ -41,12 +41,14 @@ void Menu::setTitlePosition(const sf::Vector2f& position)
     m_text.setPosition(position);
 }
 
-void Menu::createButton(const sf::Vector2f position, const sf::RectangleShape& shape, const char* text,
-    const std::function<void()>& func)
+Button* Menu::createButton(const sf::Vector2f position, const sf::RectangleShape& shape, const char* text, const std::function<void()>& func)
 {
     Button button;
     button.init(position, shape, text, m_font, func);
     m_buttons.push_back(std::make_unique<Button>(button));
+    Button* out = m_buttons.back().get();
+    out->init(position, shape, text, m_font, func);
+    return out;
 }
 
 void Menu::onLeftClick(const sf::Vector2f mousePos) const

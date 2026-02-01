@@ -27,7 +27,8 @@ public:
 
     void setMenuTitle(const sf::Text& text);
     void setTitlePosition(const sf::Vector2f& position);
-    void createButton(sf::Vector2f position, const sf::RectangleShape& shape, const char* text, const std::function<void()>& func);
+    Button* createButton(sf::Vector2f position, const sf::RectangleShape& shape, const char* text,
+                      const std::function<void()>& func);
 
     void onLeftClick(sf::Vector2f mousePos) const;
     void enable(bool enable);

@@ -1,0 +1,52 @@
+﻿{
+  "upgrades": [
+    {
+      "id": "Laser_Damage",
+      "uiName": "Laser Damage",
+      "baseCost": 10,
+      "costScale": 1.25,
+      "maxLevel": 10,
+      "effect": { "type": "laser", "field": "damageUpgrade", "delta": 0.5 }
+    },
+    {
+      "id": "Laser_Range",
+      "uiName": "Laser Range",
+      "baseCost": 15,
+      "costScale": 1.20,
+      "maxLevel": 8,
+      "effect": { "type": "laser", "field": "rangeUpgrade", "delta": 50.0 }
+    },
+    {
+      "id": "Barrier_MaxHealth",
+      "uiName": "Barrier Max HP",
+      "baseCost": 20,
+      "costScale": 1.25,
+      "maxLevel": 10,
+      "effect": { "type": "barrier", "field": "maxHealthUpgrade", "delta": 10.0 }
+    },
+    {
+      "id": "Barrier_RegenAmount",
+      "uiName": "Barrier Regen",
+      "baseCost": 30,
+      "costScale": 1.22,
+      "maxLevel": 8,
+      "effect": { "type": "barrier", "field": "regenAmountUpgrade", "delta": 2.0 }
+    },
+    {
+      "id": "Cannon_Damage",
+      "uiName": "Cannon Damage",
+      "baseCost": 20,
+      "costScale": 1.25,
+      "maxLevel": 10,
+      "effect": { "type": "cannon", "field": "damageUpgrade", "delta": 0.5 }
+    },
+    {
+      "id": "Cannon_FireRate",
+      "uiName": "Cannon Fire Rate",
+      "baseCost": 25  ,
+      "costScale": 1.30,
+      "maxLevel": 6,
+      "effect": { "type": "cannon", "field": "cooldownReduction", "delta": 0.15 }
+    }
+  ]
+}

@@ -14,6 +14,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Utils/MathUtils.h"
+#include <cmath>
 
 using json = nlohmann::json;
 
@@ -29,7 +30,7 @@ bool World::load()
 	{
 		std::cout << "[World] Failed to load station.json. Using fallback.\n";
 
-		/* Default */
+		/* Default values for station and weapons in case it fails */
 		Station::StationDescriptor stationDesc;
 		stationDesc.position = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
 		stationDesc.health = 20.f;
@@ -66,17 +67,96 @@ bool World::load()
 	/* Load Waves */
 	if (!loadWavesFromJson("data/config/waves.json"))
 	{
+		/* Default values for waves in case it fails */
 		std::cout << "[World] Failed to load waves.json. Using fallback.\n";
-
 		waves.clear();
-		Wave w{};
-		w.amountOfEnemies = 10;
-		w.descriptor.health = 3.f;
-		w.descriptor.visualType = Entity::VisualType::BasicEnemySquares;
-		w.descriptor.velocity = { 120.f, 0.f };
-		w.descriptor.size = 28.f;
-		w.descriptor.damage = 1.f;
-		waves.push_back(w);
+		for (int i = 0; i < 10; i++)
+		{
+			Wave w{};
+			w.amountOfEnemies = 10;
+			w.descriptor.health = 3.f;
+			w.descriptor.visualType = Entity::VisualType::BasicEnemySquares;
+			w.descriptor.velocity = { 120.f, 0.f };
+			w.descriptor.size = 28.f;
+			w.descriptor.damage = 1.f;
+			waves.push_back(w);
+		}
+	}
+
+	/* Load Upgrades */
+	if (!loadUpgradesFromJson("data/config/upgrades.json"))
+	{
+		/* Default values for upgrades in case it fails */
+		std::cout << "[World] Failed to load upgrades.json\n";
+
+		m_upgradeDefs.clear();
+		m_upgradeState.clear();
+
+		// ===== LASER =====
+		m_upgradeDefs[UpgradeId::Laser_Damage] =
+		{
+			"Laser Damage",   // uiName
+			50,               // baseCost
+			1.25f,            // costScale
+			10,               // maxLevel
+			0.5f              // delta
+		};
+		m_upgradeState[UpgradeId::Laser_Damage] = {};
+
+		m_upgradeDefs[UpgradeId::Laser_Range] =
+		{
+			"Laser Range",
+			75,
+			1.20f,
+			8,
+			50.f
+		};
+		m_upgradeState[UpgradeId::Laser_Range] = {};
+
+		// ===== BARRIER =====
+		m_upgradeDefs[UpgradeId::Barrier_MaxHealth] =
+		{
+			"Barrier Max HP",
+			60,
+			1.25f,
+			10,
+			10.f
+		};
+		m_upgradeState[UpgradeId::Barrier_MaxHealth] = {};
+
+		m_upgradeDefs[UpgradeId::Barrier_RegenAmount] =
+		{
+			"Barrier Regen",
+			70,
+			1.22f,
+			8,
+			2.f
+		};
+		m_upgradeState[UpgradeId::Barrier_RegenAmount] = {};
+
+		// ===== CANNON =====
+		m_upgradeDefs[UpgradeId::Cannon_Damage] =
+		{
+			"Cannon Damage",
+			60,
+			1.25f,
+			10,
+			0.5f
+		};
+		m_upgradeState[UpgradeId::Cannon_Damage] = {};
+
+		m_upgradeDefs[UpgradeId::Cannon_FireRate] =
+		{
+			"Cannon Fire Rate",
+			80,
+			1.30f,
+			6,
+			0.15f
+		};
+		m_upgradeState[UpgradeId::Cannon_FireRate] = {};
+
+		std::cout << "[World] Fallback upgrades initialized ("
+				  << m_upgradeDefs.size() << " upgrades).\n";
 	}
 
 	if (m_station)
@@ -94,8 +174,8 @@ bool World::load()
 	return true;
 }
 
-
 // ReSharper disable once CppDFAConstantParameter
+/* Get int or default value from json */
 static int getIntOr(const json& j, const char* key, const int def)
 {
     if (!j.contains(key)) return def;
@@ -103,6 +183,7 @@ static int getIntOr(const json& j, const char* key, const int def)
     return j[key].get<int>();
 }
 
+/* Get float or default value from json */
 static float getFloatOr(const json& j, const char* key, const float def)
 {
     if (!j.contains(key)) return def;
@@ -110,6 +191,7 @@ static float getFloatOr(const json& j, const char* key, const float def)
     return j[key].get<float>();
 }
 
+/* Get string or default value from json */
 static std::string getStringOr(const json& j, const char* key, const std::string& def)
 {
     if (!j.contains(key)) return def;
@@ -117,6 +199,7 @@ static std::string getStringOr(const json& j, const char* key, const std::string
     return j[key].get<std::string>();
 }
 
+/* Get vector or default value from json */
 static sf::Vector2f getVectorOr(const json& j, const char* key, sf::Vector2f& def)
 {
 	if (!j.contains(key) || !j[key].is_object())
@@ -128,6 +211,76 @@ static sf::Vector2f getVectorOr(const json& j, const char* key, sf::Vector2f& de
 	return def;
 }
 
+static bool tryParseUpgradeId(const std::string& s, UpgradeId& out)
+{
+	if (s == "Laser_Damage")         { out = UpgradeId::Laser_Damage; return true; }
+	if (s == "Laser_Range")          { out = UpgradeId::Laser_Range; return true; }
+
+	if (s == "Barrier_MaxHealth")    { out = UpgradeId::Barrier_MaxHealth; return true; }
+	if (s == "Barrier_RegenAmount")  { out = UpgradeId::Barrier_RegenAmount; return true; }
+
+	if (s == "Cannon_Damage")        { out = UpgradeId::Cannon_Damage; return true; }
+	if (s == "Cannon_FireRate")      { out = UpgradeId::Cannon_FireRate; return true; }
+
+	return false;
+}
+
+/* Upgrades from upgrades.json */
+bool World::loadUpgradesFromJson(const std::string& path)
+{
+	std::ifstream f(path);
+	if (!f.is_open())
+	{
+		std::cout << "[World] Could not open: " << path << "\n";
+		return false;
+	}
+
+	json root;
+	try { f >> root; }
+	catch (const std::exception& e)
+	{
+		std::cout << "[World] upgrades.json parse error: " << e.what() << "\n";
+		return false;
+	}
+
+	if (!root.contains("upgrades") || !root["upgrades"].is_array())
+	{
+		std::cout << "[World] Invalid upgrades.json: missing 'upgrades' array\n";
+		return false;
+	}
+
+	m_upgradeDefs.clear();
+	m_upgradeState.clear();
+
+	for (const auto& uj : root["upgrades"])
+	{
+		if (!uj.is_object())
+			continue;
+
+		const std::string idStr = getStringOr(uj, "id", "");
+		UpgradeId id{};
+		if (!tryParseUpgradeId(idStr, id))
+		{
+			std::cout << "[World] Unknown upgrade id: " << idStr << "\n";
+			continue;
+		}
+
+		UpgradeDefinition def{};
+		def.uiName    = getStringOr(uj, "uiName", idStr);
+		def.baseCost  = getIntOr(uj, "baseCost", 0);
+		def.costScale = getFloatOr(uj, "costScale", 1.f);
+		def.maxLevel  = getIntOr(uj, "maxLevel", 1);
+		def.delta     = getFloatOr(uj, "delta", 0.f);
+
+		m_upgradeDefs[id] = def;
+		m_upgradeState[id] = UpgradeState{}; // level = 0
+	}
+
+	std::cout << "[World] Loaded " << m_upgradeDefs.size() << " upgrades.\n";
+	return !m_upgradeDefs.empty();
+}
+
+/* Waves from waves.json */
 bool World::loadWavesFromJson(const std::string& filePath)
 {
     std::ifstream wavesFile(filePath);
@@ -201,6 +354,7 @@ bool World::loadWavesFromJson(const std::string& filePath)
     return !waves.empty();
 }
 
+/* Station & Weapons from station.json */
 bool World::loadStationAndWeaponsFromJson(const std::string& path)
 {
 	std::ifstream f(path);
@@ -423,7 +577,6 @@ void World::update(const float deltaMilliseconds)
 	}
 }
 
-
 void World::render(sf::RenderWindow& window)
 {
 	// Nothing to render for now
@@ -511,9 +664,9 @@ void World::setOnBarrierHealthGainedFunction(const std::function<void(float heal
 	m_onBarrierHealthGained = func;
 }
 
-void World::setOnEnemyDeathFunction(const std::function<void(int currency)>& func)
+void World::setOnCurrencyUpdateFunction(const std::function<void(int currency)>& func)
 {
-	m_onEnemyDeath = func;
+	m_onCurrencyUpdate = func;
 }
 
 void World::setTarget(const sf::Vector2f targetPos, const float targetSize)
@@ -556,7 +709,7 @@ void World::onEnemyDeath()
 		m_waveActive = false; // New wave
 	}
 
-	m_onEnemyDeath(m_currency);
+	m_onCurrencyUpdate(m_currency);
 }
 
 void World::onLeftClick()
@@ -570,27 +723,24 @@ void World::onLeftClick()
 
 void World::applyUpgrade(const UpgradeId id)
 {
+	const auto it = m_upgradeDefs.find(id);
+	if (it == m_upgradeDefs.end())
+		return;
+
+	const float delta = it->second.delta;
+
 	switch (id)
 	{
-		case UpgradeId::Laser_Damage:
-			m_laserUpgrades.damageUpgrade += 0.5f;
-			std::cout<<"Laser Upgrades"<< std::endl;
-			break;
+		case UpgradeId::Laser_Damage:        m_laserUpgrades.damageUpgrade += delta; break;
+		case UpgradeId::Laser_Range:         m_laserUpgrades.rangeUpgrade  += delta; break;
 
-		case UpgradeId::Laser_Range:
-			m_laserUpgrades.rangeUpgrade += 50.f;
-			break;
+		case UpgradeId::Barrier_MaxHealth:   m_barrierUpgrades.maxHealthUpgrade += delta; break;
+		case UpgradeId::Barrier_RegenAmount: m_barrierUpgrades.regenAmountUpgrade += delta; break;
 
-		case UpgradeId::Cannon_Damage:
-			m_cannonUpgrades.damageUpgrade += 0.5f;
+		case UpgradeId::Cannon_Damage:       m_cannonUpgrades.damageUpgrade += delta; break;
+		case UpgradeId::Cannon_FireRate:     m_cannonUpgrades.cooldownReduction += delta; break;
 
-		case UpgradeId::Cannon_FireRate:
-			m_cannonUpgrades.cooldownReduction += 0.15f;
-
-		// ToDO: Barrier
-
-		default:
-			break;
+		default: break;
 	}
 
 	if (m_station)
@@ -601,34 +751,79 @@ void World::applyUpgrade(const UpgradeId id)
 				laser->setUpgrades(m_laserUpgrades);
 			else if (auto* cannon = dynamic_cast<Cannon*>(w.get()))
 				cannon->setUpgrades(m_cannonUpgrades);
-			// ToDo: Barrier upgrades
+			else if (auto* barrier = dynamic_cast<Barrier*>(w.get()))
+				barrier->setUpgrades(m_barrierUpgrades);
 		}
 	}
 }
 
 int World::getUpgradeCost(const UpgradeId id) const
 {
-	switch (id)
-	{
-		case UpgradeId::Laser_Damage: return 0;
-		case UpgradeId::Laser_Range:  return 0;
-		case UpgradeId::Cannon_Damage: return 0;
-		case UpgradeId::Cannon_FireRate: return 0;
-		// ToDo: Barrier
-	default: return 999999;
-	}
+	const auto itDef = m_upgradeDefs.find(id);
+	const auto itState  = m_upgradeState.find(id);
+
+	/* Undefined, then invalid : 999999 */
+	if (itDef == m_upgradeDefs.end() || itState == m_upgradeState.end())
+		return 999999;
+
+	const UpgradeDefinition& definition = itDef->second;
+	const UpgradeState& state = itState->second;
+
+	/* If upgrade is maxed out, invalid : 999999 cost */
+	if (state.level >= definition.maxLevel)
+		return 999999;
+
+	auto cost = static_cast<float>(definition.baseCost);
+	for (int i = 0; i < state.level; ++i)
+		cost *= definition.costScale;
+
+	return static_cast<int>(std::lround(cost));
 }
 
 bool World::tryBuyUpgrade(const UpgradeId id)
 {
+	const auto itDef = m_upgradeDefs.find(id);
+	const auto itSt  = m_upgradeState.find(id);
+
+	if (itDef == m_upgradeDefs.end() || itSt == m_upgradeState.end())
+		return false;
+
+	UpgradeState& state = itSt->second;
+	const UpgradeDefinition& def = itDef->second;
+
+	if (state.level >= def.maxLevel)
+		return false;
+
 	const int cost = getUpgradeCost(id);
 	if (m_currency < cost)
 		return false;
 
 	m_currency -= cost;
+
+	state.level++;
+
 	applyUpgrade(id);
 
-	// m_onCurrencyChanged(m_currency);
+	if (m_onCurrencyUpdate)
+		m_onCurrencyUpdate(m_currency);
 
 	return true;
+}
+
+std::string World::getUpgradeName(const UpgradeId id) const
+{
+	const auto it = m_upgradeDefs.find(id);
+	return (it != m_upgradeDefs.end()) ? it->second.uiName : "???";
+}
+
+int World::getUpgradeLevel(const UpgradeId id) const
+{
+	const auto it = m_upgradeState.find(id);
+	return (it != m_upgradeState.end()) ? it->second.level : 0;
+}
+
+int World::getUpgradeMaxLevel(const UpgradeId id) const
+{
+	const auto it = m_upgradeDefs.find(id);
+	return (it != m_upgradeDefs.end()) ? it->second.maxLevel : 0;
 }
