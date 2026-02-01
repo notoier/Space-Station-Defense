@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 
+#include "UI/GameOverMenu.h"
 #include "UI/PauseMenu.h"
 #include "UI/UI.h"
 #include "UI/UpgradeMenu.h"
@@ -50,22 +51,25 @@ private:
 
     bool m_isPaused = false;
     bool m_upgradesOpened = false;
+    bool m_isGameOver = false;
 
     void pauseGame();
     void resumeGame();
+    void gameOver();
     void togglePause();
     void toggleUpgradeMenu();
     void closeUpgradeMenu();
     void openUpgradeMenu();
-    void quitGame();
+    void quitGame() const;
     void retryGame();
     void damageReceived(float healthPercentage) const;
     void barrierDamageReceived(float healthPercentage) const;
     void barrierHealthGained(float healthPercentage) const;
-    void updateCurrency(int currency);
+    void updateCurrency(int currency) const;
 
     PauseMenu* m_pauseWindow{nullptr};
     UI* m_ui{nullptr};
+    GameOverMenu* m_gameOverWindow{nullptr};
     UpgradeMenu* m_upgradeWindow{nullptr};
     sf::RectangleShape m_pauseOverlay;
     sf::RenderWindow* m_window{ nullptr };

@@ -40,12 +40,19 @@ bool Game::init(GameCreateInfo& createInfo)
     m_ui = new UI();
     m_ui->init();
 
+    /* Game Over Screen */
+    m_gameOverWindow = new GameOverMenu();
+    m_gameOverWindow->setNewGameFunction([this](){restartGame();});
+    m_gameOverWindow->setQuitGameFunction([this](){quitGame();});
+    m_gameOverWindow->init();
+
     /* World */
     m_world = std::make_unique<World>();
     m_world -> setOnDamageFunction([this](const float healthPercentage) {damageReceived(healthPercentage);});
     m_world -> setOnBarrierDamageFunction([this](const float healthPercentage) {barrierDamageReceived(healthPercentage);});
     m_world -> setOnBarrierHealthGainedFunction([this](const float healthPercentage) {barrierHealthGained(healthPercentage);});
     m_world -> setOnCurrencyUpdateFunction([this](const int currency) {updateCurrency(currency);});
+    m_world -> setOnGameOverFunction([this]() {gameOver();});
 
     /* Upgrade  menu */
     m_upgradeWindow = new UpgradeMenu();
@@ -121,6 +128,14 @@ void Game::update(uint32_t deltaMilliseconds)
             toggleUpgradeMenu();
         }
 
+        /* Only for debugging purpouses */
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RShift)
+        {
+            std::cout << "Hello";
+            m_isGameOver = true;
+            m_gameOverWindow->enable(true);
+        }
+
         if (event.type == sf::Event::MouseButtonPressed)
         {
             if (event.mouseButton.button == sf::Mouse::Left)
@@ -142,13 +157,19 @@ void Game::update(uint32_t deltaMilliseconds)
                     continue;
                 }
 
+                if (m_isGameOver)
+                {
+                    m_gameOverWindow->onLeftClick(mouseWorld);
+                    continue;
+                }
+
                 m_world->onLeftClick();
             }
         }
 
     }
 
-    if (m_isPaused) return;
+    if (m_isPaused || m_isGameOver) return;
 
     const sf::Vector2i mousePx = sf::Mouse::getPosition(*m_window);
     const sf::Vector2f mouseWorld = m_window->mapPixelToCoords(mousePx);
@@ -178,6 +199,10 @@ void Game::render()
     else if (m_upgradesOpened && m_upgradeWindow->isEnabled())
     {
         m_upgradeWindow->render(*m_window);
+    }
+    else if (m_isGameOver && m_gameOverWindow->isEnabled())
+    {
+        m_gameOverWindow->render(*m_window);
     }
 
     m_window->display();
@@ -217,7 +242,11 @@ void Game::restartGame()
         m_upgradeWindow->refreshTexts();
         m_upgradeWindow->enable(false);
     }
-        if (m_ui) m_ui->reset();
+
+    m_isGameOver = false;
+    if (m_gameOverWindow) m_gameOverWindow->enable(false);
+
+    if (m_ui) m_ui->reset();
 
     /* Reload */
     m_world->load();
@@ -234,6 +263,12 @@ void Game::resumeGame()
 {
     m_isPaused = false;
     if (m_pauseWindow) m_pauseWindow->enable(false);
+}
+
+void Game::gameOver()
+{
+    m_isGameOver = true;
+    if (m_gameOverWindow) m_gameOverWindow->enable(true);
 }
 
 void Game::togglePause()
@@ -263,7 +298,7 @@ void Game::openUpgradeMenu()
     }
 }
 
-void Game::quitGame()
+void Game::quitGame() const
 {
     m_window->close();
 }
@@ -289,7 +324,7 @@ void Game::barrierHealthGained(const float healthPercentage) const
     m_ui->barrierUp(healthPercentage);
 }
 
-void Game::updateCurrency(const int currency)
+void Game::updateCurrency(const int currency) const
 {
     m_ui->updateCurrency(currency);
 }

@@ -52,6 +52,8 @@ public:
 	void setOnBarrierDamageFunction(const std::function<void(float damage)>& func);
 	void setOnBarrierHealthGainedFunction(const std::function<void(float health)>& func);
 	void setOnCurrencyUpdateFunction(const std::function<void(int currency)>& func);
+	void setOnGameOverFunction(const std::function<void()>& func);
+
 	void setTarget(sf::Vector2f targetPos, float targetSize);
 
 	void setAimWorld(const sf::Vector2f& aimWorld) const;
@@ -98,6 +100,7 @@ protected:
 	std::function<void(float damage)> m_onHealthDamageReceived;
 	std::function<void(int currency)> m_onEnemyDeath;
 	std::function<void(int currency)> m_onCurrencyUpdate;
+	std::function<void()> m_onGameOver;
 
 	std::unordered_map<UpgradeId, UpgradeDefinition> m_upgradeDefs;
 	std::unordered_map<UpgradeId, UpgradeState>      m_upgradeState;

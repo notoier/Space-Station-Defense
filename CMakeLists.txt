@@ -75,7 +75,9 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
         src/Gameplay/Projectile.cpp
         include/Gameplay/Projectile.h
         src/UI/UpgradeMenu.cpp
-        include/UI/UpgradeMenu.h)
+        include/UI/UpgradeMenu.h
+        src/UI/GameOverMenu.cpp
+        include/UI/GameOverMenu.h)
 
 # Copy game data/ next to the executable
 add_custom_command(TARGET SpaceStationDefense POST_BUILD

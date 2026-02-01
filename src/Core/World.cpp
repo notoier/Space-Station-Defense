@@ -1,4 +1,3 @@
-// src/Core/World.cpp
 // ReSharper disable CppDFAConstantParameter
 #include "Core/World.h"
 
@@ -157,18 +156,6 @@ bool World::load()
 
 		std::cout << "[World] Fallback upgrades initialized ("
 				  << m_upgradeDefs.size() << " upgrades).\n";
-	}
-
-	if (m_station)
-	{
-		for (auto& w : m_station->getWeapons())
-		{
-			if (auto* b = dynamic_cast<Barrier*>(w.get()))
-			{
-				m_barrier = b;
-				m_barrier->setOnBarrierHealthGainedFunction(m_onBarrierHealthGained);
-			}
-		}
 	}
 
 	return true;
@@ -508,8 +495,16 @@ void World::bindWeaponCallbacks()
 	if (!m_station)
 		return;
 
+	m_station->setGameOverFunction(m_onGameOver);
+
 	for (auto& w : m_station->getWeapons())
 	{
+		if (auto* b = dynamic_cast<Barrier*>(w.get()))
+		{
+			m_barrier = b;
+			m_barrier->setOnBarrierHealthGainedFunction(m_onBarrierHealthGained);
+		}
+
 		w->setSpawnProjectileFn([this](const Projectile::ProjectileDescriptor& d)
 		{
 			m_projectilePool.acquire([&](Projectile& p)
@@ -718,6 +713,11 @@ void World::setOnBarrierHealthGainedFunction(const std::function<void(float heal
 void World::setOnCurrencyUpdateFunction(const std::function<void(int currency)>& func)
 {
 	m_onCurrencyUpdate = func;
+}
+
+void World::setOnGameOverFunction(const std::function<void()>& func)
+{
+	m_onGameOver = func;
 }
 
 void World::setTarget(const sf::Vector2f targetPos, const float targetSize)

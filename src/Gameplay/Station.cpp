@@ -12,9 +12,10 @@ bool Station::init(const StationDescriptor& descriptor)
     return Entity::init(descriptor);
 }
 
-void Station::update(float dt)
+void Station::update(const float dt)
 {
     Entity::update(dt);
+    if (m_health < 0) m_onGameOver();
 }
 
 void Station::render(sf::RenderWindow& window)
@@ -23,6 +24,11 @@ void Station::render(sf::RenderWindow& window)
 
     for (auto& w : m_weapons)
         w->render(window);
+}
+
+void Station::setGameOverFunction(const std::function<void()>& func)
+{
+    m_onGameOver = func;
 }
 
 void Station::setAimWorld(const sf::Vector2f& aim)

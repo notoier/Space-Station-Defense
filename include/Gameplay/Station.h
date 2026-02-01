@@ -21,6 +21,8 @@ public:
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
 
+    void setGameOverFunction(const std::function<void()>& func);
+
     std::vector<std::unique_ptr<Weapon>>& getWeapons();
     const std::vector<std::unique_ptr<Weapon>>& getWeapons() const;
     void addWeapon(std::unique_ptr<Weapon> weapon);
@@ -33,6 +35,7 @@ public:
     void reset();
 
 protected:
+    std::function<void()> m_onGameOver;
     std::vector<std::unique_ptr<Weapon>> m_weapons;
     sf::Vector2f m_aimWorld {0.f, 0.f};
 };
