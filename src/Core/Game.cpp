@@ -165,7 +165,7 @@ void Game::update(uint32_t deltaMilliseconds)
             toggleUpgradeMenu();
         }
 
-        /* Only for debugging purpouses */
+        /* Only for debugging purposes */
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RShift)
         {
             std::cout << "Hello";
