@@ -1,30 +1,44 @@
-# Space Station Defense
+# Space Defender
 
-Space Station Defense is a simple game developed in **C++** using **SFML** as part of a final assignment.
+Space Defender is a simple game developed in **C++** using **SFML** as part of a final assignment.
 
 The objective of the project is to apply core C++ programming concepts, game architecture, and resource management following an iterative development approach.
 
+![Gameplay screenshot](/GameImage.png)
+
+
 ## Game Description
 
-Space Station Defense is a 2D defense game where the player must protect a space station from incoming enemy waves.
+Space Defender is a 2D defense game where the player must protect a space station from incoming enemy waves.
 
 Enemies spawn around the map and move towards the central station. The player must strategically manage defenses and resources to prevent the station from being destroyed.
 
 The game focuses on clean architecture, efficient resource management, and an iterative development process, prioritizing technical quality over visual complexity.
 
+![Demo GIF](gamevideo.gif)
+
+
 ## Controls
-- **Mouse** – Interact / Shoot
-*(Controls may change as development progresses)*
+- **Mouse** – Interact / Shoot Laser
+- **Esc/P** – Pause Game
+- **Tab** – Upgrade Menu
+- **RShift** – Force Game Over Screen (meant for debug)
 
 ## Technical Features
 - C++17
 - SFML
 - CMake-based project
 - Modular architecture
-- Data-oriented design where possible
+- Data-oriented design where possible (Json config files) :
+  - Station & Weapons configs
+  - Waves config
+  - Upgrades & Costs configs
+- Object Pooling for enemies and projectiles
+- Sound Effects
+- Graphics based purely in geometry: no images / sprites / texture
 
 ## Project Structure
-- /assets → Game assets (textures, fonts, sounds)
+- /data → Game assets (textures, fonts, sounds)
 - /include → Header files
 - /src → Source files
 - /build → Build directory (ignored by Git)
