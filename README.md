@@ -4,6 +4,9 @@ Space Station Defense is a simple game developed in **C++** using **SFML** as pa
 
 The objective of the project is to apply core C++ programming concepts, game architecture, and resource management following an iterative development approach.
 
+![Gameplay screenshot](/GameImage.png)
+
+
 ## Game Description
 
 Space Station Defense is a 2D defense game where the player must protect a space station from incoming enemy waves.
@@ -11,6 +14,9 @@ Space Station Defense is a 2D defense game where the player must protect a space
 Enemies spawn around the map and move towards the central station. The player must strategically manage defenses and resources to prevent the station from being destroyed.
 
 The game focuses on clean architecture, efficient resource management, and an iterative development process, prioritizing technical quality over visual complexity.
+
+![Demo GIF](gamevideo.gif)
+
 
 ## Controls
 - **Mouse** – Interact / Shoot Laser
