@@ -13,18 +13,23 @@ Enemies spawn around the map and move towards the central station. The player mu
 The game focuses on clean architecture, efficient resource management, and an iterative development process, prioritizing technical quality over visual complexity.
 
 ## Controls
-- **Mouse** – Interact / Shoot
-*(Controls may change as development progresses)*
+- **Mouse** – Interact / Shoot Laser
+- **Esc/P** – Pause Game
+- **Tab** – Upgrade Menu
+- **RShift** – Force Game Over Screen (meant for debug)
 
 ## Technical Features
 - C++17
 - SFML
 - CMake-based project
 - Modular architecture
-- Data-oriented design where possible
+- Data-oriented design where possible (Json config files) :
+  - Station & Weapons configs
+  - Waves config
+  - Upgrades & Costs configs
 
 ## Project Structure
-- /assets → Game assets (textures, fonts, sounds)
+- /data → Game assets (textures, fonts, sounds)
 - /include → Header files
 - /src → Source files
 - /build → Build directory (ignored by Git)
