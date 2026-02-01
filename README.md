@@ -1,6 +1,6 @@
-# Space Station Defense
+# Space Defender
 
-Space Station Defense is a simple game developed in **C++** using **SFML** as part of a final assignment.
+Space Defender is a simple game developed in **C++** using **SFML** as part of a final assignment.
 
 The objective of the project is to apply core C++ programming concepts, game architecture, and resource management following an iterative development approach.
 
@@ -9,7 +9,7 @@ The objective of the project is to apply core C++ programming concepts, game arc
 
 ## Game Description
 
-Space Station Defense is a 2D defense game where the player must protect a space station from incoming enemy waves.
+Space Defender is a 2D defense game where the player must protect a space station from incoming enemy waves.
 
 Enemies spawn around the map and move towards the central station. The player must strategically manage defenses and resources to prevent the station from being destroyed.
 
