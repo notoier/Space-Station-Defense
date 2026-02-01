@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 
+#include "AudioManager.h"
 #include "UI/GameOverMenu.h"
 #include "UI/PauseMenu.h"
 #include "UI/UI.h"
@@ -34,7 +35,8 @@ public:
     };
 
     ~Game();
-
+    void initSounds();
+    static void playSound(const std::string& id, float volume = 100.f);
     bool init(GameCreateInfo& createInfo);
 
     [[nodiscard]] bool isRunning() const;
@@ -73,6 +75,8 @@ private:
     UpgradeMenu* m_upgradeWindow{nullptr};
     sf::RectangleShape m_pauseOverlay;
     sf::RenderWindow* m_window{ nullptr };
+
+    inline static std::unique_ptr<AudioManager> m_audioManager{nullptr};
     std::unique_ptr<World> m_world{ nullptr };
 };
 

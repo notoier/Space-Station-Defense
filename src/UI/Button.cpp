@@ -4,6 +4,8 @@
 
 #include "UI/Button.h"
 #include <iostream>
+
+#include "Core/Game.h"
 #include "Utils/Constants.h"
 #include "Utils/MathUtils.h"
 
@@ -56,6 +58,7 @@ void Button::onClick() const
 {
     if (onClickFunction)
     {
+        Game::playSound("buttonClick", 10);
         onClickFunction();
     }
 }

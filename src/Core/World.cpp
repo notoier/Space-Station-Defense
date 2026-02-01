@@ -13,7 +13,10 @@
 #include <nlohmann/json.hpp>
 
 #include "Utils/MathUtils.h"
+#include "Utils/JsonParser.h"
 #include <cmath>
+
+#include "Core/Game.h"
 
 using json = nlohmann::json;
 
@@ -210,57 +213,6 @@ void World::resetGame()
 		/* Reset station health */
 		m_station->reset();
 	}
-}
-
-// ReSharper disable once CppDFAConstantParameter
-/* Get int or default value from json */
-static int getIntOr(const json& j, const char* key, const int def)
-{
-    if (!j.contains(key)) return def;
-    if (!j[key].is_number_integer()) return def;
-    return j[key].get<int>();
-}
-
-/* Get float or default value from json */
-static float getFloatOr(const json& j, const char* key, const float def)
-{
-    if (!j.contains(key)) return def;
-    if (!j[key].is_number()) return def;
-    return j[key].get<float>();
-}
-
-/* Get string or default value from json */
-static std::string getStringOr(const json& j, const char* key, const std::string& def)
-{
-    if (!j.contains(key)) return def;
-    if (!j[key].is_string()) return def;
-    return j[key].get<std::string>();
-}
-
-/* Get vector or default value from json */
-static sf::Vector2f getVectorOr(const json& j, const char* key, sf::Vector2f& def)
-{
-	if (!j.contains(key) || !j[key].is_object())
-		return def;
-
-	const json& v = j[key];
-	def.x = getFloatOr(v, "x", def.x);
-	def.y = getFloatOr(v, "y", def.y);
-	return def;
-}
-
-static bool tryParseUpgradeId(const std::string& s, UpgradeId& out)
-{
-	if (s == "Laser_Damage")         { out = UpgradeId::Laser_Damage; return true; }
-	if (s == "Laser_Range")          { out = UpgradeId::Laser_Range; return true; }
-
-	if (s == "Barrier_MaxHealth")    { out = UpgradeId::Barrier_MaxHealth; return true; }
-	if (s == "Barrier_RegenAmount")  { out = UpgradeId::Barrier_RegenAmount; return true; }
-
-	if (s == "Cannon_Damage")        { out = UpgradeId::Cannon_Damage; return true; }
-	if (s == "Cannon_FireRate")      { out = UpgradeId::Cannon_FireRate; return true; }
-
-	return false;
 }
 
 /* Upgrades from upgrades.json */
@@ -657,6 +609,8 @@ void World::spawnEnemy()
 	std::uniform_real_distribution<double> dist2(0.75, 0.9);
 	std::uniform_int_distribution<int> side(0, 1);
 
+	Game::playSound("newWave", 10);
+
 	// If no more waves defined, then repeat last wave
 	const int currentWave = m_currentWave < m_waves.size() ? m_currentWave : static_cast<int>(m_waves.size() - 1);
 	for (int i = 0; i < m_waves[currentWave].amountOfEnemies; ++i)
@@ -780,6 +734,8 @@ void World::applyUpgrade(const UpgradeId id)
 
 	const float delta = it->second.delta;
 
+	Game::playSound("upgrade", 10);
+
 	switch (id)
 	{
 		case UpgradeId::Laser_Damage:        m_laserUpgrades.damageUpgrade += delta; break;
@@ -837,8 +793,9 @@ bool World::tryBuyUpgrade(const UpgradeId id)
 	const auto itSt  = m_upgradeState.find(id);
 
 	if (itDef == m_upgradeDefs.end() || itSt == m_upgradeState.end())
+	{
 		return false;
-
+	}
 	UpgradeState& state = itSt->second;
 	const UpgradeDefinition& def = itDef->second;
 
@@ -847,7 +804,10 @@ bool World::tryBuyUpgrade(const UpgradeId id)
 
 	const int cost = getUpgradeCost(id);
 	if (m_currency < cost)
+	{
+		Game::playSound("noMoney", 5);
 		return false;
+	}
 
 	m_currency -= cost;
 

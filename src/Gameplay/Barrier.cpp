@@ -4,6 +4,8 @@
 
 #include "../../include/Gameplay/Barrier.h"
 
+#include "Core/Game.h"
+
 Barrier::Barrier()
 {
     BarrierDesc barrierDesc;
@@ -88,7 +90,7 @@ float Barrier::receiveDamage(const float damage)
         return 0.f;
 
     m_damaged = true;
-
+    m_health <= 0 ? Game::playSound("barrierBroken", 10) :Game::playSound("barrierHit", 10);
     const float prev = m_health;
 
     if (damage >= prev)

@@ -8,6 +8,7 @@
 
 #include <limits>
 
+#include "Core/Game.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 
 Cannon::Cannon(const CannonDesc& desc)
@@ -150,6 +151,7 @@ void Cannon::shoot()
     pd.maxLifeSeconds = m_desc.projectileLifeSec;
 
     m_spawnProjectile(pd);
+    Game::playSound("cannon", 10);
 }
 
 float Cannon::getDamage()

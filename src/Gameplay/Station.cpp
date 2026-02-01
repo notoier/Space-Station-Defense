@@ -4,6 +4,7 @@
 
 #include "Gameplay/Station.h"
 
+#include "Core/Game.h"
 #include "Gameplay/Laser.h"
 
 bool Station::init(const StationDescriptor& descriptor)
@@ -83,9 +84,10 @@ void Station::shootLaser(ObjectPool<Enemy>& object_pool)
 void Station::receiveDamage(const float damage)
 {
     Entity::receiveDamage(damage);
+    Game::playSound("stationHit", 10);
 
     if (!m_isAlive)
     {
-        //TODO: Game Over
+        m_onGameOver();
     }
 }

@@ -2,7 +2,7 @@
 // Created by Oier Álvarez on 01/02/2026.
 //
 
-#include "../../include/UI/GameOverMenu.h"
+#include "UI/GameOverMenu.h"
 
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "UI/Button.h"

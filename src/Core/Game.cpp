@@ -23,6 +23,13 @@ bool Game::init(GameCreateInfo& createInfo)
     m_window = new sf::RenderWindow({ createInfo.screenWidth, createInfo.screenHeight }, createInfo.gameTitle);
     m_window->setFramerateLimit(createInfo.frameRateLimit);
 
+    if (!m_audioManager)
+    {
+        m_audioManager = std::make_unique<AudioManager>();
+        initSounds();
+    }
+
+
     /* Pause Menu */
     m_pauseWindow = new PauseMenu();
     m_pauseWindow->setResumeFunc([this]() {resumeGame();});
@@ -103,6 +110,36 @@ Game::~Game()
     m_pauseWindow = nullptr;
 }
 
+void Game::initSounds()
+{
+    const std::string filepath = "data/sfx/";
+    m_audioManager->loadSound("barrierBroken", filepath + "barrier_broken_sfx.wav");
+    m_audioManager->loadSound("barrierHit", filepath + "barrier_hit_sfx.wav");
+    m_audioManager->loadSound("buttonClick", filepath + "button_click_sfx.wav");
+    m_audioManager->loadSound("cannon", filepath + "cannon_sfx.wav");
+    m_audioManager->loadSound("enemyHit", filepath + "enemy_hit_sfx.wav");
+    m_audioManager->loadSound("enemyDeath", filepath + "enemy_death_sfx.wav");
+    m_audioManager->loadSound("gameOver", filepath + "game_over_sfx.wav");
+    m_audioManager->loadSound("laser", filepath + "laser_sfx.wav");
+    m_audioManager->loadSound("newWave", filepath + "new_wave_sfx.wav");
+    m_audioManager->loadSound("noMoney", filepath + "no_money_sfx.wav");
+    m_audioManager->loadSound("upgrade", filepath + "upgrade_sfx.wav");
+    m_audioManager->loadSound("retryGame", filepath + "retry_game_sfx.wav");
+    m_audioManager->loadSound("stationHit", filepath + "station_hit_sfx.wav");
+}
+
+void Game::playSound(const std::string& id, const float volume)
+{
+    if (!m_audioManager)
+    {
+        std::cout << "[Audio] playSound called but audio manager is null\n";
+        return;
+    }
+    std::cout << "[Audio] playSound: " << id << " vol=" << volume << "\n";
+    m_audioManager->playSound(id, volume);
+
+}
+
 bool Game::isRunning() const
 {
     return m_window && m_window->isOpen();
@@ -132,8 +169,7 @@ void Game::update(uint32_t deltaMilliseconds)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RShift)
         {
             std::cout << "Hello";
-            m_isGameOver = true;
-            m_gameOverWindow->enable(true);
+            gameOver();
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -250,6 +286,7 @@ void Game::restartGame()
 
     /* Reload */
     m_world->load();
+    Game::playSound("retryGame", 20);
 }
 
 void Game::pauseGame()
@@ -268,6 +305,7 @@ void Game::resumeGame()
 void Game::gameOver()
 {
     m_isGameOver = true;
+    Game::playSound("gameOver", 10);
     if (m_gameOverWindow) m_gameOverWindow->enable(true);
 }
 

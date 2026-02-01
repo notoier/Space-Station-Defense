@@ -8,6 +8,7 @@
 #include <iostream>
 #include <ostream>
 
+#include "Core/Game.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Utils/MathUtils.h"
 
@@ -72,6 +73,7 @@ void Laser::shoot()
 
     // Visual
     beamSetUp(m_context.originWorld, end, dir);
+    Game::playSound("laser", 10);
 }
 
 float Laser::getDamage()

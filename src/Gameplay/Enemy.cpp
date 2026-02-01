@@ -4,6 +4,8 @@
 
 #include "Gameplay/Enemy.h"
 #include <cmath>
+
+#include "Core/Game.h"
 #include "Core/World.h"
 #include "Utils/MathUtils.h"
 
@@ -51,6 +53,7 @@ float Enemy::getDamage() const
 void Enemy::receiveDamage(const float damage)
 {
     Entity::receiveDamage(damage);
+    m_health <= 0 ? Game::playSound("enemyDeath", 10) : Game::playSound("enemyHit", 5);
     if (!m_isAlive && m_onDeath) m_onDeath();
 }
 
