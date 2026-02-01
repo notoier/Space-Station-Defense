@@ -33,6 +33,9 @@ The game focuses on clean architecture, efficient resource management, and an it
   - Station & Weapons configs
   - Waves config
   - Upgrades & Costs configs
+- Object Pooling for enemies and projectiles
+- Sound Effects
+- Graphics based purely in geometry: no images / sprites / texture
 
 ## Project Structure
 - /data → Game assets (textures, fonts, sounds)
