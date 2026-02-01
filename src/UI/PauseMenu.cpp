@@ -19,7 +19,7 @@ PauseMenu::PauseMenu()
 
 bool PauseMenu::init()
 {
-    const char* labels[3] = {"Resume", "Settings", "Quit"};
+    const char* labels[3] = {"Resume", "Retry", "Quit"};
 
     m_position = sf::Vector2f(SCREEN_WIDTH * PAUSE_MENU_SIZE_PERCENTAGE.x,
                               static_cast<float>(SCREEN_HEIGHT * (1 - PAUSE_MENU_SIZE_PERCENTAGE.y) * 0.5));
@@ -63,28 +63,25 @@ bool PauseMenu::init()
 
     // Create buttons
     createButton({x, startY + 0 * (buttonSize.y + spacing)}, buttonShape, labels[0], [this]() { return resume(); });
-    createButton({x, startY + 1 * (buttonSize.y + spacing)}, buttonShape, labels[1], [this]() { return settings(); });
+    createButton({x, startY + 1 * (buttonSize.y + spacing)}, buttonShape, labels[1], [this]() { return retry(); });
     createButton({x, startY + 2 * (buttonSize.y + spacing)}, buttonShape, labels[2], [this]() { return quit(); });
 
     return true;
 }
 
-void PauseMenu::resume()
+void PauseMenu::resume() const
 {
-    std::cout << "PauseMenu::resume" << std::endl;
     if (m_onResume) m_onResume();
 }
 
-void PauseMenu::quit()
+void PauseMenu::quit() const
 {
-    std::cout << "PauseMenu::quit()" << std::endl;
     if (m_onExit) m_onExit();
 }
 
-void PauseMenu::settings()
+void PauseMenu::retry() const
 {
-    std::cout << "PauseMenu::settings()" << std::endl;
-    if (m_onSettings) m_onSettings();
+    if (m_onRetry) m_onRetry();
 }
 
 void PauseMenu::setResumeFunc(const std::function<void()>& func)
@@ -92,9 +89,9 @@ void PauseMenu::setResumeFunc(const std::function<void()>& func)
     m_onResume = func;
 }
 
-void PauseMenu::setSettingsFunc(const std::function<void()>& func)
+void PauseMenu::setRetryFunc(const std::function<void()>& func)
 {
-    m_onSettings = func;
+    m_onRetry = func;
 }
 
 void PauseMenu::setExitFunc(const std::function<void()>& func)

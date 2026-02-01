@@ -44,7 +44,7 @@ public:
     World* getWorld() const;
     sf::RenderWindow& getWindow();
     const sf::RenderWindow& getWindow() const;
-
+    void restartGame();
 
 private:
 
@@ -58,7 +58,7 @@ private:
     void closeUpgradeMenu();
     void openUpgradeMenu();
     void quitGame();
-    void openSettings();
+    void retryGame();
     void damageReceived(float healthPercentage) const;
     void barrierDamageReceived(float healthPercentage) const;
     void barrierHealthGained(float healthPercentage) const;

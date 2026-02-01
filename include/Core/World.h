@@ -35,6 +35,7 @@ public:
 
 	// Minimal load: nothing to load yet
 	bool load();
+	void resetGame();
 
 	// deltaMilliseconds kept to match your template
 	void update(float deltaMilliseconds);
@@ -90,7 +91,7 @@ protected:
 	Cannon::CannonUpgrades m_cannonUpgrades;
 	Barrier::BarrierUpgrades m_barrierUpgrades;
 
-	std::vector<Wave> waves;
+	std::vector<Wave> m_waves;
 
 	std::function<void(float damage)> m_onBarrierDamageReceived;
 	std::function<void(float health)> m_onBarrierHealthGained;

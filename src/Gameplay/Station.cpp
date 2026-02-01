@@ -41,6 +41,11 @@ void Station::onLeftClick(ObjectPool<Enemy>& object_pool)
     shootLaser(object_pool);
 }
 
+void Station::reset()
+{
+    m_health = m_maxHealth;
+}
+
 
 std::vector<std::unique_ptr<Weapon>>& Station::getWeapons()
 {

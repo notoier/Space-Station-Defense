@@ -30,6 +30,7 @@ public:
     void setAimWorld(const sf::Vector2f& aim);
     [[nodiscard]] const sf::Vector2f& getAimWorld() const;
     void onLeftClick(ObjectPool<Enemy>& object_pool);
+    void reset();
 
 protected:
     std::vector<std::unique_ptr<Weapon>> m_weapons;

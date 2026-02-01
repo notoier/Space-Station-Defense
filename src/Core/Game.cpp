@@ -26,7 +26,7 @@ bool Game::init(GameCreateInfo& createInfo)
     /* Pause Menu */
     m_pauseWindow = new PauseMenu();
     m_pauseWindow->setResumeFunc([this]() {resumeGame();});
-    m_pauseWindow->setSettingsFunc([this]() {openSettings();});
+    m_pauseWindow->setRetryFunc([this]() {retryGame();});
     m_pauseWindow->setExitFunc([this]() {quitGame();});
 
     m_pauseOverlay.setSize({
@@ -200,6 +200,29 @@ const sf::RenderWindow& Game::getWindow() const
     return *m_window;
 }
 
+void Game::restartGame()
+{
+    if (!m_world) return;
+
+    /* Reset pools & weapons */
+    m_world->resetGame();
+
+    /* Reset UI */
+    m_isPaused = false;
+    if (m_pauseWindow) m_pauseWindow->enable(false);
+
+    m_upgradesOpened = false;
+    if (m_upgradeWindow)
+    {
+        m_upgradeWindow->refreshTexts();
+        m_upgradeWindow->enable(false);
+    }
+        if (m_ui) m_ui->reset();
+
+    /* Reload */
+    m_world->load();
+}
+
 void Game::pauseGame()
 {
     closeUpgradeMenu();
@@ -242,12 +265,13 @@ void Game::openUpgradeMenu()
 
 void Game::quitGame()
 {
-    std::cout << "Quitting Game..." << std::endl;
+    m_window->close();
 }
 
-void Game::openSettings()
+void Game::retryGame()
 {
     std::cout << "Opening Settings..." << std::endl;
+    restartGame();
 }
 
 void Game::damageReceived(const float healthPercentage) const

@@ -27,6 +27,7 @@ public:
 
     void barrierDown(float barrierPercentage);
     void barrierUp(float barrierPercentage);
+    void reset();
 
     void updateCurrency(int money);
 private:

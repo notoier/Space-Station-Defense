@@ -15,15 +15,15 @@ public:
     bool init() override;
     void render(sf::RenderWindow& window) const override;
 
-    void resume();
-    void quit();
-    void settings();
+    void resume() const;
+    void quit() const;
+    void retry() const;
     void setResumeFunc(const std::function<void()>& func);
-    void setSettingsFunc(const std::function<void()>& func);
+    void setRetryFunc(const std::function<void()>& func);
     void setExitFunc(const std::function<void()>& func);
 private:
     std::function<void()> m_onResume = nullptr;
-    std::function<void()> m_onSettings = nullptr;
+    std::function<void()> m_onRetry = nullptr;
     std::function<void()> m_onExit = nullptr;
 
     sf::Vector2f m_position {0, 0};

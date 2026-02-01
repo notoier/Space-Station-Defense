@@ -3,10 +3,6 @@
 //
 
 #include "UI/UI.h"
-
-#include <iostream>
-#include <ostream>
-
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Utils/Constants.h"
@@ -15,7 +11,6 @@
 bool UI::init()
 {
     /* BARRIER BAR */
-
     const sf::Vector2f barrierBarPos = {1400, 950 };
     initBarrierBar(barrierBarPos);
 
@@ -87,9 +82,15 @@ void UI::healthDown(const float healthPercentage)
     }
 }
 
-void UI::healthUp(float health)
+void UI::healthUp(const float healthPercentage)
 {
-
+    sf::Vector2f newBarSize = (UI_BAR_SIZE - sf::Vector2f{5, 5});
+    newBarSize.x *= healthPercentage;
+    if (CompositeShape::Part* part = m_healthBar.getPart(1); part != nullptr)
+    {
+        part->shape = std::make_unique<sf::RectangleShape>(newBarSize);
+        part->shape->setFillColor(HEALTH_BAR_COLOR);
+    }
 }
 
 void UI::barrierDown(const float barrierPercentage)
@@ -112,6 +113,12 @@ void UI::barrierUp(const float barrierPercentage)
         part->shape = std::make_unique<sf::RectangleShape>(newBarSize);
         part->shape->setFillColor(BARRIER_BAR_COLOR);
     }
+}
+
+void UI::reset()
+{
+    barrierUp(100);
+    healthUp(100);
 }
 
 void UI::updateCurrency(const int money)

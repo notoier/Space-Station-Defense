@@ -69,7 +69,7 @@ bool World::load()
 	{
 		/* Default values for waves in case it fails */
 		std::cout << "[World] Failed to load waves.json. Using fallback.\n";
-		waves.clear();
+		m_waves.clear();
 		for (int i = 0; i < 10; i++)
 		{
 			Wave w{};
@@ -79,7 +79,7 @@ bool World::load()
 			w.descriptor.velocity = { 120.f, 0.f };
 			w.descriptor.size = 28.f;
 			w.descriptor.damage = 1.f;
-			waves.push_back(w);
+			m_waves.push_back(w);
 		}
 	}
 
@@ -172,6 +172,57 @@ bool World::load()
 	}
 
 	return true;
+}
+
+void World::resetGame()
+{
+	/* Reset waves */
+	m_currentWave = 0;
+	m_waveActive = false;
+	m_amountOfEnemies = 0;
+	m_waves = {};
+
+	/* Reset currency */
+	m_currency = 0;
+	if (m_onCurrencyUpdate)
+		m_onCurrencyUpdate(m_currency);
+
+	/* Reset enemy pool */
+	m_enemyPool.forEachActive([&](Enemy& e)
+	{
+		m_enemyPool.release(&e);
+	});
+
+	/* Reset projectile pool */
+	m_projectilePool.forEachActive([&](Projectile& p)
+	{
+		m_projectilePool.release(&p);
+	});
+
+	/* Reset upgrades (levels) + reset upgrade deltas */
+	for (auto& [id, st] : m_upgradeState)
+		st.level = 0;
+
+	m_laserUpgrades = {};
+	m_cannonUpgrades = {};
+	m_barrierUpgrades = {};
+
+	/* Re-apply upgrades to weapons */
+	if (m_station)
+	{
+		for (auto& w : m_station->getWeapons())
+		{
+			if (auto* laser = dynamic_cast<Laser*>(w.get()))
+				laser->setUpgrades(m_laserUpgrades);
+			else if (auto* cannon = dynamic_cast<Cannon*>(w.get()))
+				cannon->setUpgrades(m_cannonUpgrades);
+			else if (auto* barrier = dynamic_cast<Barrier*>(w.get()))
+				barrier->setUpgrades(m_barrierUpgrades);
+		}
+
+		/* Reset station health */
+		m_station->reset();
+	}
 }
 
 // ReSharper disable once CppDFAConstantParameter
@@ -308,7 +359,7 @@ bool World::loadWavesFromJson(const std::string& filePath)
         return false;
     }
 
-    waves.clear();
+    m_waves.clear();
 
     for (const auto& wj : root["waves"])
     {
@@ -347,11 +398,11 @@ bool World::loadWavesFromJson(const std::string& filePath)
             }
         }
 
-        waves.push_back(wave);
+        m_waves.push_back(wave);
     }
 
-    std::cout << "[World] Loaded " << waves.size() << " waves.\n";
-    return !waves.empty();
+    std::cout << "[World] Loaded " << m_waves.size() << " waves.\n";
+    return !m_waves.empty();
 }
 
 /* Station & Weapons from station.json */
@@ -612,10 +663,10 @@ void World::spawnEnemy()
 	std::uniform_int_distribution<int> side(0, 1);
 
 	// If no more waves defined, then repeat last wave
-	const int currentWave = m_currentWave < waves.size() ? m_currentWave : static_cast<int>(waves.size() - 1);
-	for (int i = 0; i < waves[currentWave].amountOfEnemies; ++i)
+	const int currentWave = m_currentWave < m_waves.size() ? m_currentWave : static_cast<int>(m_waves.size() - 1);
+	for (int i = 0; i < m_waves[currentWave].amountOfEnemies; ++i)
 	{
-		Enemy::EnemyDescriptor desc = waves[currentWave].descriptor;
+		Enemy::EnemyDescriptor desc = m_waves[currentWave].descriptor;
 
 		desc.position = {
 			static_cast<float>((side(mt) ? dist(mt) : dist2(mt))) * SCREEN_WIDTH,
@@ -683,7 +734,7 @@ void World::setAimWorld(const sf::Vector2f& aimWorld) const
 
 void World::addWave(const Wave& wave)
 {
-	waves.push_back(wave);
+	m_waves.push_back(wave);
 }
 
 void World::addCurrency(const int money)
